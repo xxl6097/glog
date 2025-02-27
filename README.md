@@ -19,7 +19,7 @@ CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o main.exe main.go
 ## 一、添加依赖
 
 ```go
-go get -u github.com/xxl6097go-log@v0.0.5
+go get -u github.com/xxl6097/glog
 ```
 
 ## 二、使用示例
