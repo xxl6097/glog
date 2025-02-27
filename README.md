@@ -29,7 +29,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/xxl6097go-log/glog"
+	"github.com/xxl6097/glog/glog"
 	"time"
 )
 

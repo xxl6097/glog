@@ -1,7 +1,7 @@
 package glog_test
 
 import (
-	"github.com/xxl6097go-log/glog"
+	"github.com/xxl6097/glog/glog"
 	"testing"
 )
 
