@@ -14,6 +14,7 @@ func hook(data []byte) {
 }
 
 func init() {
+	glog.LogDefaultLogSetting()
 	//开启日志保存文件
 	//glog.LogSaveFile()
 	//glog.SetNoHeader(true)
@@ -29,7 +30,8 @@ func init() {
 	//glog.SetNoHeader(true)
 	//glog.SetNoColor(true)
 
-	glog.AddFlag(glog.BitMicroSeconds)
+	//glog.AddFlag(glog.BitMicroSeconds)
+	//glog.AddFlag(glog.BitMilliseconds)
 }
 func getCallerInfo(skip int) (info string) {
 
@@ -68,6 +70,7 @@ func main() {
 	glog.Println("服务安装成功!")
 	test()
 	glog.Println("hello glog...")
+	time.Sleep(time.Millisecond * 100)
 	//glog.SetLogFile("/usr/local/AATEST/logs", "normal.log")
 	glog.Info("只有使用这个log打印才能记录日志哦", time.Now().Format("2006-01-02 15:04:05"))
 	//glog.Flush()

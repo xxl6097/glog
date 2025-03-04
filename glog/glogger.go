@@ -21,6 +21,7 @@ const (
 const (
 	BitDate         = 1 << iota                            // Date flag bit 2019/01/23 (日期标记位)
 	BitTime                                                // Time flag bit 01:23:12 (时间标记位)
+	BitMilliseconds                                        // Microsecond flag bit 01:23:12.111222 (微秒级标记位)
 	BitMicroSeconds                                        // Microsecond flag bit 01:23:12.111222 (微秒级标记位)
 	BitLongFile                                            // Complete file name /home/go/src/zinx/server.go (完整文件名称)
 	BitShortFile                                           // Last file name server.go (最后文件名)
@@ -117,7 +118,7 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 	}
 
 	// If the time-related flags are set, add the time information to the log header.
-	if log.flag&(BitDate|BitTime|BitMicroSeconds) != 0 {
+	if log.flag&(BitDate|BitTime|BitMicroSeconds|BitMilliseconds) != 0 {
 		// Date flag is set
 		if log.flag&BitDate != 0 {
 			year, month, day := t.Date()
@@ -141,6 +142,23 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 			if log.flag&BitMicroSeconds != 0 {
 				buf.WriteByte('.')
 				itoa(buf, t.Nanosecond()/1e3, 6) // "11:15:33.123123
+			} else if log.flag&BitMilliseconds != 0 {
+				buf.WriteByte('.')
+				milliseconds := t.Nanosecond() / 1e6 // 获取当前时间的毫秒部分（0-999）
+				itoa(buf, int(milliseconds), 3)      // "11:15:33.123123
+			}
+			buf.WriteByte(' ')
+		} else if log.flag&(BitTime|BitMilliseconds) != 0 {
+			hour, min, sec := t.Clock()
+			itoa(buf, hour, 2)
+			buf.WriteByte(':') // "11:"
+			itoa(buf, min, 2)
+			buf.WriteByte(':') // "11:15:"
+			itoa(buf, sec, 2)  // "11:15:33"
+			// Microsecond flag is set
+			if log.flag&BitMilliseconds != 0 {
+				buf.WriteByte('.')
+				itoa(buf, int(t.UnixMilli()), 3) // "11:15:33.123123
 			}
 			buf.WriteByte(' ')
 		}
@@ -452,8 +470,8 @@ func (log *GLoggerCore) SetPrefix(prefix string) {
 	log.prefix = prefix
 }
 
-// SetPrefix sets a custom prefix for the log
-// (设置日志的 用户自定义前缀字符串)
+// SetNoHeader
+// 头指的时间，行号等信息
 func (log *GLoggerCore) SetNoHeader(yes bool) {
 	log.mu.Lock()
 	defer log.mu.Unlock()

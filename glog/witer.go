@@ -112,6 +112,7 @@ func (w *Writer) SetNoColor(b bool) {
 	w.mu.Unlock()
 }
 
+// SetNoHeader 头指的时间，行号等信息
 func (w *Writer) SetNoHeader(b bool) {
 	w.mu.Lock()
 	w.noHeader = b

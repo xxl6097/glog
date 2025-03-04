@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -38,6 +39,7 @@ func ResetFlags(flag int) {
 	StdGLog.ResetFlags(flag)
 }
 
+// 设置打印时间戳到毫秒
 func AddFlag(flag int) {
 	StdGLog.AddFlag(flag)
 }
@@ -52,6 +54,49 @@ func SetLogFile(fileDir string, fileName string) {
 
 func LogSaveFile() {
 	StdGLog.SetLogFile("./", "app.log")
+}
+
+func getLogDir() string {
+	switch runtime.GOOS {
+	case "windows":
+		return filepath.Join(os.Getenv("ProgramData"), "MyApp", "logs")
+	default:
+		return "./logs"
+	}
+}
+
+// GetCrossPlatformLogDir
+// 临时日志	C:\Users\xxx\AppData\Local\Temp	/tmp	os.TempDir()
+// 用户级日志	C:\Users\xxx\logs	/home/username/logs	os.UserHomeDir() + 拼接目录
+// 系统级日志	C:\ProgramData\app\logs	/var/log/app	固定路径 + filepath.Join()
+func GetCrossPlatformLogDir(appName string) string {
+	var logDir string
+	if home, err := os.UserHomeDir(); err == nil {
+		logDir = filepath.Join(home, appName)
+	} else {
+		logDir = filepath.Join(os.TempDir(), appName)
+	}
+
+	if _, err := os.Stat(logDir); os.IsNotExist(err) {
+		os.MkdirAll(logDir, 0755)
+	}
+	return logDir
+}
+
+func LogDefaultLogSetting(args ...string) {
+	appName := "glog"
+	logFileName := "app.log"
+	if len(args) >= 1 {
+		appName = args[0]
+	}
+	if len(args) >= 2 {
+		logFileName = args[1]
+	}
+	StdGLog.SetLogFile(GetCrossPlatformLogDir(appName), logFileName)
+	SetCons(true)               //需要控制台打印
+	SetMaxAge(7)                //默认保存7天
+	SetMaxSize(1 * 1024 * 1024) //1MB
+	AddFlag(BitMilliseconds)
 }
 
 // Hook hook log
@@ -74,6 +119,8 @@ func SetCons(b bool) {
 	StdGLog.SetCons(b)
 }
 
+// SetNoHeader
+// 头指的时间，行号等信息
 func SetNoHeader(b bool) {
 	StdGLog.SetNoHeader(b)
 }
