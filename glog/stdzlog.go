@@ -59,24 +59,27 @@ func LogSaveFile() {
 func getLogDir() string {
 	switch runtime.GOOS {
 	case "windows":
-		return filepath.Join(os.Getenv("ProgramData"), "MyApp", "logs")
+		return filepath.Join(os.Getenv("ProgramData"))
 	default:
-		return "./logs"
+		return filepath.Join(os.TempDir())
 	}
 }
 
-// GetCrossPlatformLogDir
+// GetCrossPlatformDataDir
 // 临时日志	C:\Users\xxx\AppData\Local\Temp	/tmp	os.TempDir()
 // 用户级日志	C:\Users\xxx\logs	/home/username/logs	os.UserHomeDir() + 拼接目录
 // 系统级日志	C:\ProgramData\app\logs	/var/log/app	固定路径 + filepath.Join()
-func GetCrossPlatformLogDir(appName string) string {
-	var logDir string
-	if home, err := os.UserHomeDir(); err == nil {
-		logDir = filepath.Join(home, appName)
-	} else {
-		logDir = filepath.Join(os.TempDir(), appName)
-	}
+func GetCrossPlatformDataDir(args ...string) string {
+	//if home, err := os.UserHomeDir(); err == nil {
+	//	logDir = filepath.Join(home, appName)
+	//} else {
+	//	logDir = filepath.Join(os.TempDir(), appName)
+	//}
 
+	logDir := getLogDir()
+	dirs := []string{logDir}
+	dirs = append(dirs, args...)
+	logDir = filepath.Join(dirs...)
 	if _, err := os.Stat(logDir); os.IsNotExist(err) {
 		os.MkdirAll(logDir, 0755)
 	}
@@ -92,7 +95,8 @@ func LogDefaultLogSetting(args ...string) {
 	if len(args) >= 2 {
 		logFileName = args[1]
 	}
-	StdGLog.SetLogFile(GetCrossPlatformLogDir(appName), logFileName)
+	logDir := GetCrossPlatformDataDir(appName, "log")
+	StdGLog.SetLogFile(logDir, logFileName)
 	SetCons(true)               //需要控制台打印
 	SetMaxAge(7)                //默认保存7天
 	SetMaxSize(1 * 1024 * 1024) //1MB
