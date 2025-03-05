@@ -29,6 +29,7 @@ import (
 */
 
 var StdGLog = NewGLog(os.Stdout, "", BitDefault)
+var logDir string
 
 func Flags() int {
 	return StdGLog.Flags()
@@ -56,7 +57,7 @@ func LogSaveFile() {
 	StdGLog.SetLogFile("./", "app.log")
 }
 
-func getLogDir() string {
+func GetTempDir() string {
 	switch runtime.GOOS {
 	case "windows":
 		return filepath.Join(os.Getenv("ProgramData"))
@@ -76,13 +77,17 @@ func GetCrossPlatformDataDir(args ...string) string {
 	//	logDir = filepath.Join(os.TempDir(), appName)
 	//}
 
-	logDir := getLogDir()
-	dirs := []string{logDir}
+	tempDir := GetTempDir()
+	dirs := []string{tempDir}
 	dirs = append(dirs, args...)
 	logDir = filepath.Join(dirs...)
 	if _, err := os.Stat(logDir); os.IsNotExist(err) {
 		os.MkdirAll(logDir, 0755)
 	}
+	return logDir
+}
+
+func GetAppLogDir() string {
 	return logDir
 }
 
