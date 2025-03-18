@@ -54,21 +54,12 @@ function tag() {
   git push origin $version
 }
 
+# shellcheck disable=SC2120
 function push() {
-  commit=""
-  if [ ! -n "$1" ]; then
-    commit="$(date '+%Y-%m-%d %H:%M:%S') by ${USER}"
-  else
-    commit="$1 by ${USER}"
-  fi
-  echo $commit
   git add .
-  git commit -m "${version} $commit"
+  git commit -m "${version} by ${USER}"
   echo "提交代码"
   git push
-#  git push -u origin main
-#  echo "打tag标签"
-#  tag
 }
 
 function main_pre() {
@@ -258,6 +249,28 @@ function branchMenu() {
   esac
 }
 
+function quickTag() {
+  git add .
+  git commit -m "release ${version}"
+  git tag -a $version -m "release v{version}"
+  git push origin $version
+
+  push
+}
+
+function tagMenu() {
+    echo "1. 快速标签"
+    echo "2. 自定义标签"
+    echo "请输入编号:"
+    read index
+    clear
+    case "$index" in
+    [1]) (quickTag);;
+    [2]) (tagAndGitPush);;
+    *) echo "exit" ;;
+  esac
+}
+
 function m() {
     echo "1. 快速提交"
     echo "2. 项目更新"
@@ -269,7 +282,7 @@ function m() {
     case "$index" in
     [1]) (push);;
     [2]) (pullMenu);;
-    [3]) (tagAndGitPush);;
+    [3]) (tagMenu);;
     [4]) (branchMenu);;
     *) echo "exit" ;;
   esac
