@@ -1,7 +1,7 @@
 #!/bin/bash
 #version=$(if [ "$(git describe --tags --abbrev=0 2>/dev/null)" != "" ]; then git describe --tags --abbrev=0; else git log --pretty=format:'%h' -n 1; fi)
 #version=$(git tag -l "v*" --sort=-creatordate | head -n 1)
-version=$(git tag -l "[0-99]*.[0-99]*.[0-99]*" --sort=-creatordate | head -n 1)
+version=$(git tag -l "v[0-99]*.[0-99]*.[0-99]*" --sort=-creatordate | head -n 1)
 #git tag --sort=-creatordate | head -n 1
 #git tag -l "v*" --sort=-creatordate | head -n 1
 #git tag -l "v[0-99][0-99].[0-99][0-99].[0-99][0-99]" --sort=-v:refname | head -n 1
@@ -46,14 +46,6 @@ function forcepull() {
   git fetch --all && git reset --hard origin/$1 && git pull
 }
 
-function tag() {
-  echo "===>${version}"
-  git add .
-  git commit -m "release ${version}"
-  git tag -a $version -m "release ${version}"
-  git push origin $version
-}
-
 # shellcheck disable=SC2120
 function push() {
   git add .
@@ -67,16 +59,6 @@ function main_pre() {
   upgradeVersion
 }
 
-
-function tagAndGitPush() {
-    read -p "请输入标签名称: " commit
-    commit="$commit $(date '+%Y-%m-%d %H:%M:%S') by ${USER}"
-    vtag="$(date '+%Y.%m.%d.%H.%M.%S')"
-    git add .
-    git commit -m "${commit}"
-    git tag -a v$vtag -m "${commit}"
-    git push origin v$vtag
-}
 
 function forceBranch() {
     # 获取所有分支列表（包含远程分支）
@@ -249,12 +231,23 @@ function branchMenu() {
   esac
 }
 
-function quickTag() {
+
+function customTag() {
+    read -p "请输入标签备注: " commit
+    commit="$commit by ${USER}"
+    vtag="$(date '+%Y.%m.%d.%H.%M.%S')"
+    git add .
+    git commit -m "${commit}"
+    git tag -a v$vtag -m "${commit}"
+    git push origin v$vtag
+    echo "标签：v$vtag"
+}
+
+function quickTagAndPush() {
   git add .
   git commit -m "release ${version}"
-  git tag -a $version -m "release v{version}"
-  git push origin $version
-
+  git tag -a v$version -m "release v{version}"
+  git push origin v$version
   push
 }
 
@@ -265,8 +258,8 @@ function tagMenu() {
     read index
     clear
     case "$index" in
-    [1]) (quickTag);;
-    [2]) (tagAndGitPush);;
+    [1]) (quickTagAndPush);;
+    [2]) (customTag);;
     *) echo "exit" ;;
   esac
 }
