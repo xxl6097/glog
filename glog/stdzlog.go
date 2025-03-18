@@ -87,7 +87,10 @@ func GetCrossPlatformDataDir(args ...string) string {
 	return logDir
 }
 
-func GetAppLogDir() string {
+func GetAppDataDir() string {
+	if logDir == "" {
+		logDir = GetCrossPlatformDataDir("glog")
+	}
 	return logDir
 }
 
