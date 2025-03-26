@@ -29,7 +29,8 @@ import (
 */
 
 var StdGLog = NewGLog(os.Stdout, "", BitDefault)
-var logDir string
+
+//var logDir string
 
 func Flags() int {
 	return StdGLog.Flags()
@@ -77,33 +78,39 @@ func GetCrossPlatformDataDir(args ...string) string {
 	//	logDir = filepath.Join(os.TempDir(), appName)
 	//}
 
-	tempDir := GetTempDir()
-	dirs := []string{tempDir}
-	dirs = append(dirs, args...)
-	logDir = filepath.Join(dirs...)
-	if _, err := os.Stat(logDir); os.IsNotExist(err) {
-		os.MkdirAll(logDir, 0755)
+	var dirs []string
+	dirs = append(dirs, GetTempDir())
+	dirs = append(dirs, GetAppName())
+	if len(args) > 0 {
+		dirs = append(dirs, args...)
 	}
-	return logDir
+	dir := filepath.Join(dirs...)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		os.MkdirAll(dir, 0755)
+	}
+	return dir
 }
 
-func GetAppDataDir() string {
-	if logDir == "" {
-		logDir = GetCrossPlatformDataDir("glog")
+func GetAppName() string {
+	var appName string
+	if exePath, err := os.Executable(); err == nil {
+		appName = filepath.Base(exePath)
+	} else {
+		appName = filepath.Base(os.Args[0])
 	}
-	return logDir
+	// 处理通用扩展名
+	if ext := filepath.Ext(appName); ext != "" {
+		appName = strings.TrimSuffix(appName, ext)
+	}
+	return appName
 }
 
 func LogDefaultLogSetting(args ...string) {
-	appName := "glog"
 	logFileName := "app.log"
 	if len(args) >= 1 {
-		appName = args[0]
-	}
-	if len(args) >= 2 {
 		logFileName = args[1]
 	}
-	logDir := GetCrossPlatformDataDir(appName, "log")
+	logDir := GetCrossPlatformDataDir("log")
 	StdGLog.SetLogFile(logDir, logFileName)
 	SetCons(true)               //需要控制台打印
 	SetMaxAge(7)                //默认保存7天

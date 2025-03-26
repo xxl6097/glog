@@ -76,7 +76,7 @@ function forceBranch() {
 }
 
 function forcePullCurrent() {
-  forcepull "$(git branch)"
+  forcepull "$(git rev-parse --abbrev-ref HEAD)"
 }
 
 function pullMenu() {
