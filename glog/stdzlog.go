@@ -105,8 +105,7 @@ func GetAppName() string {
 	return appName
 }
 
-func LogDefaultLogSetting() {
-	logFileName := "app.log"
+func LogDefaultLogSetting(logFileName string) {
 	logDir := GetCrossPlatformDataDir("log")
 	StdGLog.SetLogFile(logDir, logFileName)
 	SetCons(true)               //需要控制台打印
