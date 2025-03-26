@@ -14,7 +14,7 @@ func hook(data []byte) {
 }
 
 func init() {
-	glog.LogDefaultLogSetting()
+	glog.LogDefaultLogSetting("app.log")
 	//开启日志保存文件
 	//glog.LogSaveFile()
 	//glog.SetNoHeader(true)
