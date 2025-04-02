@@ -106,7 +106,7 @@ func GetAppName() string {
 }
 
 func LogDefaultLogSetting(logFileName string) {
-	logDir := GetCrossPlatformDataDir("log")
+	logDir := GetCrossPlatformDataDir(GetAppName())
 	StdGLog.SetLogFile(logDir, logFileName)
 	SetCons(true)               //需要控制台打印
 	SetMaxAge(7)                //默认保存7天
