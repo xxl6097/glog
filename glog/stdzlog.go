@@ -102,6 +102,12 @@ func GetAppName() string {
 	if ext := filepath.Ext(appName); ext != "" {
 		appName = strings.TrimSuffix(appName, ext)
 	}
+	if strings.Contains(appName, "_") {
+		arr := strings.Split(appName, "_")
+		if arr != nil && len(arr) > 0 {
+			appName = arr[0]
+		}
+	}
 	return appName
 }
 
