@@ -28,8 +28,8 @@ function forcepull() {
 # shellcheck disable=SC2120
 function push() {
   git add .
+  echo "git commit -m "${version} by ${USER}""
   git commit -m "${version} by ${USER}"
-  echo "提交代码"
   git push
 }
 
@@ -212,23 +212,37 @@ function branchMenu() {
 
 
 function customTag() {
-    read -p "请输入标签备注: " commit
+    read -p "请输入提交信息: " commit
     commit="$commit by ${USER}"
-    vtag="$(date '+%Y.%m.%d.%H.%M.%S')"
+    read -p "请输入标签: " vtag
+    if [ -z "$vtag" ]; then
+        vtag="$(date '+%Y.%m.%d.%H.%M.%S')"
+    fi
     git add .
     git commit -m "${commit}"
-    git tag -a v$vtag -m "${commit}"
-    git push origin v$vtag
-    echo "标签：v$vtag"
+    git tag -a $vtag -m "${commit}"
+    git push origin $vtag
+    echo "标签：$vtag"
 }
 
-function quickTagAndPush() {
+function quickPushAndTag() {
+  push
   git add .
-  git commit -m "release ${version}"
-  git tag -a $version -m "release v{version}"
+  git commit -m "${version}"
+  git tag -a $version -m "v${version}"
   git push origin $version
   echo "新标签：${version}"
+}
+
+function quickPushAndTagDeploy() {
   push
+  git add .
+  echo "git commit -m "DEPLOY ${version}""
+  git commit -m "DEPLOY ${version}"
+  git tag -a $version -m "DEPLOY ${version}"
+  echo "git tag -a $version -m "DEPLOY ${version}""
+  git push origin $version
+  echo "新标签：${version}"
 }
 
 function tagMenu() {
@@ -238,7 +252,7 @@ function tagMenu() {
     read index
     clear
     case "$index" in
-    [1]) (quickTagAndPush);;
+    [1]) (quickPushAndTag);;
     [2]) (customTag);;
     *) echo "exit" ;;
   esac
@@ -246,7 +260,7 @@ function tagMenu() {
 
 function m() {
     echo "1. 快速提交"
-    echo "2. 快速标签+提交"
+    echo "2. 发布版本"
     echo "3. 项目更新"
     echo "4. 项目标签"
     echo "5. 分支管理"
@@ -255,7 +269,7 @@ function m() {
     clear
     case "$index" in
     [1]) (push);;
-    [2]) (quickTagAndPush);;
+    [2]) (quickPushAndTagDeploy);;
     [3]) (pullMenu);;
     [4]) (tagMenu);;
     [5]) (branchMenu);;
@@ -306,9 +320,9 @@ function test() {
   # 示例调用
   version_part="v12.98.2"
 
-    local prefix="${version_part%%[0-9.]*}"  # 提取前缀（删除数字/点后的所有内容）
-    local version="${version_part#$prefix}"  # 提取版本号（删除前缀后的剩余部分）
-    echo "--->${prefix}    ${version}"
+  local prefix="${version_part%%[0-9.]*}"  # 提取前缀（删除数字/点后的所有内容）
+  local version="${version_part#$prefix}"  # 提取版本号（删除前缀后的剩余部分）
+  echo "--->${prefix}    ${version}"
 
 }
 
