@@ -92,12 +92,17 @@ func GetCrossPlatformDataDir(args ...string) string {
 }
 
 func GetAppName() string {
-	var appName string
+	var appPath string
 	if exePath, err := os.Executable(); err == nil {
-		appName = filepath.Base(exePath)
+		appPath = exePath
 	} else {
-		appName = filepath.Base(os.Args[0])
+		appPath = os.Args[0]
 	}
+	return GetNameByPath(appPath)
+}
+
+func GetNameByPath(appPath string) string {
+	appName := filepath.Base(appPath)
 	// 处理通用扩展名
 	if ext := filepath.Ext(appName); ext != "" {
 		appName = strings.TrimSuffix(appName, ext)
