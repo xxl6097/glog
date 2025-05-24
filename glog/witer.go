@@ -78,7 +78,7 @@ func New(out io.Writer, path string) *Writer {
 }
 func (w *Writer) daemon() {
 	for range time.NewTicker(time.Second * 5).C {
-		w.flush()
+		_ = w.flush()
 	}
 }
 
