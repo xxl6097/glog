@@ -10,11 +10,13 @@ import (
 )
 
 func hook(data []byte) {
-	fmt.Println(string(data))
+	newData := data[2:]
+	fmt.Println(string(newData))
 }
 
 func init() {
 	glog.LogDefaultLogSetting("app.log")
+	glog.Hook(hook)
 	//开启日志保存文件
 	//glog.LogSaveFile()
 	//glog.SetNoHeader(true)

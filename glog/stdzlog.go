@@ -36,6 +36,10 @@ func Flags() int {
 	return StdGLog.Flags()
 }
 
+func CloseLog() {
+	StdGLog.closeFile()
+}
+
 // ResetFlags sets the flags of StdGLog
 func ResetFlags(flag int) {
 	StdGLog.ResetFlags(flag)

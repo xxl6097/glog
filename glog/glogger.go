@@ -532,7 +532,12 @@ func (log *GLoggerCore) SetNoColor(b bool) {
 // (关闭日志绑定的文件)
 func (log *GLoggerCore) closeFile() {
 	if log.fw != nil {
-		log.fw.Close()
+		err := log.fw.Close()
+		if err != nil {
+			fmt.Println("log关闭失败", err)
+		} else {
+			fmt.Println("log关闭成功")
+		}
 	}
 }
 
