@@ -306,7 +306,7 @@ func (w *Writer) flush() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.bw == nil {
-		fmt.Println("Writer flush w.bw is nil")
+		//fmt.Println("Writer flush w.bw is nil")
 		return nil
 	}
 	return w.bw.Flush()
