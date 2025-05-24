@@ -283,7 +283,7 @@ func (w *Writer) Close() error {
 	err := w.flush()
 	err = w.close()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Writer Close", err)
 	}
 	return err
 }
@@ -293,6 +293,7 @@ func (w *Writer) close() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.file == nil {
+		fmt.Println("Writer close w.file is nil")
 		return nil
 	}
 	err := w.file.Sync()
@@ -305,6 +306,7 @@ func (w *Writer) flush() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.bw == nil {
+		fmt.Println("Writer flush w.bw is nil")
 		return nil
 	}
 	return w.bw.Flush()

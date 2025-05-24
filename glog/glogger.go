@@ -538,6 +538,8 @@ func (log *GLoggerCore) closeFile() {
 		} else {
 			fmt.Println("log关闭成功")
 		}
+	} else {
+		fmt.Println("log.fw is nil")
 	}
 }
 
