@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -293,8 +294,7 @@ func (w *Writer) close() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.file == nil {
-		fmt.Println("Writer close w.file is nil")
-		return nil
+		return errors.New("file is nil")
 	}
 	err := w.file.Sync()
 	err = w.file.Close()

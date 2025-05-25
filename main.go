@@ -88,6 +88,7 @@ func main() {
 	glog.Error("wahahhawahahhawahahhawahahhawahahhawahahhawahahhawahahha")
 	glog.ErrorNoCon("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
 	glog.Debug("dece")
+	glog.CloseLog()
 	//fmt.Scanln()
 	os.Exit(0)
 }
