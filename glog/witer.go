@@ -284,7 +284,7 @@ func (w *Writer) Close() error {
 	err := w.flush()
 	err = w.close()
 	if err != nil {
-		fmt.Println("Writer Close", err)
+		//fmt.Println("Writer Close", err)
 	}
 	return err
 }
