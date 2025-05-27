@@ -197,8 +197,11 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 	return buf.Bytes()
 }
 
-// OutPut outputs log file, the original method
+// Flush outputs log file, the original method
 func (log *GLoggerCore) Flush() error {
+	if log.fw == nil {
+		return nil
+	}
 	log.mu.Lock()
 	defer log.mu.Unlock()
 	return log.fw.Flush()
