@@ -71,11 +71,11 @@ func GetTempDir() string {
 	}
 }
 
-// GetCrossPlatformDataDir
+// GetDataDir
 // 临时日志	C:\Users\xxx\AppData\Local\Temp	/tmp	os.TempDir()
 // 用户级日志	C:\Users\xxx\logs	/home/username/logs	os.UserHomeDir() + 拼接目录
 // 系统级日志	C:\ProgramData\app\logs	/var/log/app	固定路径 + filepath.Join()
-func GetCrossPlatformDataDir(args ...string) string {
+func GetDataDir(args ...string) string {
 	//if home, err := os.UserHomeDir(); err == nil {
 	//	logDir = filepath.Join(home, appName)
 	//} else {
@@ -133,7 +133,7 @@ func GetNameByPath(appPath string) string {
 }
 
 func LogDefaultLogSetting(logFileName string) {
-	logDir := GetCrossPlatformDataDir(GetAppName())
+	logDir := GetDataDir(GetAppName())
 	StdGLog.SetLogFile(logDir, logFileName)
 	SetCons(true)               //需要控制台打印
 	SetMaxAge(7)                //默认保存7天
