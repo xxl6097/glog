@@ -256,6 +256,9 @@ func (log *GLoggerCore) OutPut(level int, s string) error {
 	//	// write the filled buffer to IO output
 	//}
 	//log.fw.WriteInConsole(level, log.buf.Bytes())
+	if log.fw == nil {
+		log.fw = New(log.out, filepath.Join(AppHome(), "app.log"))
+	}
 	_, err = log.fw.Write(log.buf.Bytes())
 	if log.onLogHook != nil {
 		log.onLogHook(log.buf.Bytes())
