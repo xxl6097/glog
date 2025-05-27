@@ -5,7 +5,6 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 )
@@ -62,78 +61,8 @@ func LogSaveFile() {
 	StdGLog.SetLogFile("./", "app.log")
 }
 
-func GetTempDir() string {
-	switch runtime.GOOS {
-	case "windows":
-		return filepath.Join(os.Getenv("ProgramData"))
-	default:
-		return filepath.Join(os.TempDir())
-	}
-}
-
-// GetDataDir
-// 临时日志	C:\Users\xxx\AppData\Local\Temp	/tmp	os.TempDir()
-// 用户级日志	C:\Users\xxx\logs	/home/username/logs	os.UserHomeDir() + 拼接目录
-// 系统级日志	C:\ProgramData\app\logs	/var/log/app	固定路径 + filepath.Join()
-func GetDataDir(args ...string) string {
-	//if home, err := os.UserHomeDir(); err == nil {
-	//	logDir = filepath.Join(home, appName)
-	//} else {
-	//	logDir = filepath.Join(os.TempDir(), appName)
-	//}
-
-	var dirs []string
-	dirs = append(dirs, GetTempDir())
-	dirs = append(dirs, GetAppName())
-	if len(args) > 0 {
-		dirs = append(dirs, args...)
-	}
-	dir := filepath.Join(dirs...)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.MkdirAll(dir, 0755)
-	}
-	return dir
-}
-
-func GetAppName() string {
-	var appPath string
-	if exePath, err := os.Executable(); err == nil {
-		appPath = exePath
-	} else {
-		appPath = os.Args[0]
-	}
-	return GetNameByPath(appPath)
-}
-
-func GetNameByPath(appPath string) string {
-	appName := filepath.Base(appPath)
-	// 处理通用扩展名
-	if ext := filepath.Ext(appName); ext != "" {
-		appName = strings.TrimSuffix(appName, ext)
-	}
-	if strings.Contains(appName, "_") {
-		arr := strings.Split(appName, "_")
-		if arr != nil && len(arr) > 0 {
-			appName = arr[0]
-		}
-	}
-	if strings.Contains(appName, "-") {
-		arr := strings.Split(appName, "-")
-		if arr != nil && len(arr) > 0 {
-			appName = arr[0]
-		}
-	}
-	if strings.Contains(appName, ".") {
-		arr := strings.Split(appName, ".")
-		if arr != nil && len(arr) > 0 {
-			appName = arr[0]
-		}
-	}
-	return appName
-}
-
 func LogDefaultLogSetting(logFileName string) {
-	logDir := GetDataDir(GetAppName())
+	logDir := AppHome()
 	StdGLog.SetLogFile(logDir, logFileName)
 	SetCons(true)               //需要控制台打印
 	SetMaxAge(7)                //默认保存7天
