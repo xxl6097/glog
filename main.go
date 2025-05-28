@@ -16,6 +16,7 @@ func hook(data []byte) {
 
 func init() {
 	//glog.LogDefaultLogSetting("app.log")
+	glog.SetLogFile("./log", "app.log")
 	glog.Hook(hook)
 	//开启日志保存文件
 	//glog.LogSaveFile()
@@ -88,6 +89,10 @@ func main() {
 	glog.Error("wahahhawahahhawahahhawahahhawahahhawahahhawahahhawahahha")
 	glog.ErrorNoCon("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
 	glog.Debug("dece")
+	for {
+		time.Sleep(time.Second * 10)
+		glog.Debug(time.Now().Format("2006-01-02 15:04:05"))
+	}
 	glog.CloseLog()
 	//fmt.Scanln()
 	os.Exit(0)

@@ -79,7 +79,19 @@ func New(out io.Writer, path string) *Writer {
 }
 func (w *Writer) daemon() {
 	for range time.NewTicker(time.Second * 5).C {
-		_ = w.flush()
+		err := w.flush()
+		if err != nil {
+		}
+		_, e := os.Stat(w.fpath)
+		if e != nil && os.IsNotExist(e) {
+			_ = os.MkdirAll(w.fdir, 0755)
+			fout, e2 := os.OpenFile(w.fpath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+			if e2 == nil {
+				w.file = fout
+				w.bw = bufio.NewWriter(w.file)
+			}
+
+		}
 	}
 }
 
@@ -233,8 +245,6 @@ func (w *Writer) rotate() error {
 	if err == nil {
 		w.size = finfo.Size()
 		w.created = finfo.ModTime()
-	} else if os.IsNotExist(err) {
-		_ = os.MkdirAll(filepath.Dir(w.fpath), 0755)
 	}
 	w.creates = w.created.AppendFormat(nil, time.RFC3339)
 	fout, err := os.OpenFile(w.fpath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
