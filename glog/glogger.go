@@ -525,6 +525,16 @@ func (log *GLoggerCore) SetCons(b bool) {
 	defer log.mu.Unlock()
 	log.fw.SetCons(b)
 }
+
+// SetDaemonSecond 日志写文件周期时钟
+func (log *GLoggerCore) SetDaemonSecond(b int) {
+	if log.fw == nil {
+		return
+	}
+	log.mu.Lock()
+	defer log.mu.Unlock()
+	log.fw.SetDaemonSecond(b)
+}
 func (log *GLoggerCore) SetNoColor(b bool) {
 	if log.fw == nil {
 		return

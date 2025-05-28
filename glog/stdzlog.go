@@ -90,6 +90,11 @@ func SetCons(b bool) {
 	StdGLog.SetCons(b)
 }
 
+// SetDaemonSecond 日志写文件周期时钟
+func SetDaemonSecond(second int) {
+	StdGLog.SetDaemonSecond(second)
+}
+
 // SetNoHeader
 // 头指的时间，行号等信息
 func SetNoHeader(b bool) {

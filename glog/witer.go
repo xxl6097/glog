@@ -33,31 +33,33 @@ const (
 var _ io.WriteCloser = (*Writer)(nil)
 
 type Writer struct {
-	maxAge    int       // 最大保留天数
-	maxSize   int64     // 单个日志最大容量 默认 64MB
-	size      int64     // 累计大小
-	fpath     string    // 文件目录 完整路径 fpath=fdir+fname+fsuffix
-	fdir      string    //
-	fname     string    // 文件名
-	fsuffix   string    // 文件后缀名 默认 .log
-	zipsuffix string    // 文件后缀名 默认 .log
-	created   time.Time // 文件创建日期
-	creates   []byte    // 文件创建日期
-	cons      bool      // 标准输出  默认 false
-	nocolor   bool      // 颜色输出
-	noHeader  bool      // 日志头
-	file      *os.File
-	bw        *bufio.Writer
-	mu        sync.Mutex
-	out       io.Writer //日志输出的文件描述符
+	maxAge       int       // 最大保留天数
+	daemonSecond int       // 日志多久一次写文件，单位秒
+	maxSize      int64     // 单个日志最大容量 默认 64MB
+	size         int64     // 累计大小
+	fpath        string    // 文件目录 完整路径 fpath=fdir+fname+fsuffix
+	fdir         string    //
+	fname        string    // 文件名
+	fsuffix      string    // 文件后缀名 默认 .log
+	zipsuffix    string    // 文件后缀名 默认 .log
+	created      time.Time // 文件创建日期
+	creates      []byte    // 文件创建日期
+	cons         bool      // 标准输出  默认 false
+	nocolor      bool      // 颜色输出
+	noHeader     bool      // 日志头
+	file         *os.File
+	bw           *bufio.Writer
+	mu           sync.Mutex
+	out          io.Writer //日志输出的文件描述符
 }
 
 func New(out io.Writer, path string) *Writer {
 	w := &Writer{
-		fpath: path, //dir1/dir2/app.log
-		mu:    sync.Mutex{},
-		out:   out,
-		cons:  true,
+		fpath:        path, //dir1/dir2/app.log
+		mu:           sync.Mutex{},
+		out:          out,
+		cons:         true,
+		daemonSecond: 5,
 	}
 	w.fdir = filepath.Dir(w.fpath)                                  //dir1/dir2
 	w.fsuffix = filepath.Ext(w.fpath)                               //.log
@@ -78,7 +80,7 @@ func New(out io.Writer, path string) *Writer {
 	return w
 }
 func (w *Writer) daemon() {
-	for range time.NewTicker(time.Second * 5).C {
+	for range time.NewTicker(time.Second * time.Duration(w.daemonSecond)).C {
 		err := w.flush()
 		if err != nil {
 		}
@@ -116,6 +118,13 @@ func (w *Writer) SetMaxSize(ms int64) {
 func (w *Writer) SetCons(b bool) {
 	w.mu.Lock()
 	w.cons = b
+	w.mu.Unlock()
+}
+
+// SetDaemonSecond 日志写文件周期时钟
+func (w *Writer) SetDaemonSecond(second int) {
+	w.mu.Lock()
+	w.daemonSecond = second
 	w.mu.Unlock()
 }
 
