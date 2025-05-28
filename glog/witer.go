@@ -233,6 +233,8 @@ func (w *Writer) rotate() error {
 	if err == nil {
 		w.size = finfo.Size()
 		w.created = finfo.ModTime()
+	} else if os.IsNotExist(err) {
+		_ = os.MkdirAll(filepath.Dir(w.fpath), 0755)
 	}
 	w.creates = w.created.AppendFormat(nil, time.RFC3339)
 	fout, err := os.OpenFile(w.fpath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
