@@ -70,6 +70,14 @@ func LogDefaultLogSetting(logFileName string) {
 	AddFlag(BitMilliseconds)
 }
 
+func LogSetting(logDir, logFileName string) {
+	StdGLog.SetLogFile(logDir, logFileName)
+	SetCons(true)               //需要控制台打印
+	SetMaxAge(7)                //默认保存7天
+	SetMaxSize(1 * 1024 * 1024) //1MB
+	AddFlag(BitMilliseconds)
+}
+
 // Hook hook log
 func Hook(f func([]byte)) {
 	StdGLog.SetLogHook(f)
