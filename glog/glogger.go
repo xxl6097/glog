@@ -550,9 +550,9 @@ func (log *GLoggerCore) closeFile() {
 	if log.fw != nil {
 		err := log.fw.Close()
 		if err != nil {
-			fmt.Println("log关闭失败", err)
+			//fmt.Println("log关闭失败", err)
 		} else {
-			fmt.Println("log关闭成功")
+			//fmt.Println("log关闭成功")
 		}
 	} else {
 		fmt.Println("log.fw is nil")
