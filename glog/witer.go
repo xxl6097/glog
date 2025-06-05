@@ -148,7 +148,7 @@ func (w *Writer) Close() error {
 // close closes the file if it is open.
 func (w *Writer) close() error {
 	if w.logWriter == nil {
-		return errors.New("file is nil")
+		return errors.New("logWriter is nil")
 	}
 	w.mu.Lock()
 	defer w.mu.Unlock()
