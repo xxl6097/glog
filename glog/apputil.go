@@ -1,6 +1,8 @@
 package glog
 
 import (
+	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -68,4 +70,15 @@ func AppHome(args ...string) string {
 		os.MkdirAll(dir, 0755)
 	}
 	return dir
+}
+
+func TextToFile(filePath string, content string) {
+	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(fmt.Sprintf("%s\n", content)) // 直接写入字符串
+	// 或写入字节切片：file.Write([]byte("data"))
 }

@@ -72,7 +72,7 @@ type GLoggerCore struct {
 	// (获取日志文件名和代码上述的runtime.Call 的函数调用层数)
 	calldDepth int
 
-	fw *Writer
+	writer *Writer
 
 	onLogHook func([]byte)
 }
@@ -82,7 +82,7 @@ func NewGLog(out io.Writer, prefix string, flag int) *GLoggerCore {
 	// By default, debug is turned on, the depth is 2, and the ZinxLogger object calling the log print method can call up to two levels to reach the output function
 	// (默认 debug打开， calledDepth深度为2,ZinxLogger对象调用日志打印方法最多调用两层到达output函数)
 	zlog := &GLoggerCore{out: out, prefix: prefix, flag: flag, isolationLevel: 0, calldDepth: 2}
-	//zlog.fw = New(zlog.out, filepath.Join(AppHome(), "app.log"))
+	zlog.writer = New(zlog.out)
 	// Set the log object's resource cleanup destructor method (this is not necessary, as go's Gc will automatically collect, but for the sake of neatness)
 	// (设置log对象 回收资源 析构方法(不设置也可以，go的Gc会自动回收，强迫症没办法))
 	runtime.SetFinalizer(zlog, CleanGLog)
@@ -199,12 +199,12 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 
 // Flush outputs log file, the original method
 func (log *GLoggerCore) Flush() error {
-	if log.fw == nil {
+	if log.writer == nil {
 		return nil
 	}
 	log.mu.Lock()
 	defer log.mu.Unlock()
-	return log.fw.Flush()
+	return log.writer.Flush()
 }
 
 // OutPut outputs log file, the original method
@@ -259,10 +259,10 @@ func (log *GLoggerCore) OutPut(level int, s string) error {
 	//	// write the filled buffer to IO output
 	//}
 	//log.fw.WriteInConsole(level, log.buf.Bytes())
-	if log.fw == nil {
-		log.fw = New(log.out, filepath.Join(AppHome(), "app.log"))
-	}
-	_, err = log.fw.Write(log.buf.Bytes())
+	//if log.fw == nil {
+	//	log.fw = New(log.out, filepath.Join(AppHome(), "app.log"))
+	//}
+	_, err = log.writer.Write(log.buf.Bytes())
 	if log.onLogHook != nil {
 		log.onLogHook(log.buf.Bytes())
 	}
@@ -481,74 +481,75 @@ func (log *GLoggerCore) SetPrefix(prefix string) {
 func (log *GLoggerCore) SetNoHeader(yes bool) {
 	log.mu.Lock()
 	defer log.mu.Unlock()
-	log.fw.SetNoHeader(yes)
+	log.writer.SetNoHeader(yes)
 }
 
 // SetLogFile sets the log file output
 // (设置日志文件输出)
 func (log *GLoggerCore) SetLogFile(fileDir string, fileName string) {
-	if log.fw != nil {
-		err := log.fw.Close()
+	if log.writer != nil {
+		err := log.writer.Close()
 		if err != nil {
 			fmt.Println(err)
 		}
 	}
-	log.fw = New(log.out, filepath.Join(fileDir, fileName))
+	log.writer.SetLogFile(filepath.Join(fileDir, fileName))
+	//log.fw = New(log.out, filepath.Join(fileDir, fileName))
 }
 
 // SetMaxAge 最大保留天数
 func (log *GLoggerCore) SetMaxAge(ma int) {
-	if log.fw == nil {
+	if log.writer == nil {
 		return
 	}
 	log.mu.Lock()
 	defer log.mu.Unlock()
-	log.fw.SetMaxAge(ma)
+	log.writer.SetMaxAge(ma)
 }
 
 // SetMaxSize 单个日志最大容量 单位：字节
 func (log *GLoggerCore) SetMaxSize(ms int64) {
-	if log.fw == nil {
+	if log.writer == nil {
 		return
 	}
 	log.mu.Lock()
 	defer log.mu.Unlock()
-	log.fw.SetMaxSize(ms)
+	log.writer.SetMaxSize(ms)
 }
 
 // SetCons 同时输出控制台
 func (log *GLoggerCore) SetCons(b bool) {
-	if log.fw == nil {
+	if log.writer == nil {
 		return
 	}
 	log.mu.Lock()
 	defer log.mu.Unlock()
-	log.fw.SetCons(b)
+	log.writer.SetCons(b)
 }
 
 // SetDaemonSecond 日志写文件周期时钟
 func (log *GLoggerCore) SetDaemonSecond(b int) {
-	if log.fw == nil {
+	if log.writer == nil {
 		return
 	}
 	log.mu.Lock()
 	defer log.mu.Unlock()
-	log.fw.SetDaemonSecond(b)
+	log.writer.SetDaemonSecond(b)
 }
 func (log *GLoggerCore) SetNoColor(b bool) {
-	if log.fw == nil {
+	if log.writer == nil {
 		return
 	}
 	log.mu.Lock()
 	defer log.mu.Unlock()
-	log.fw.SetNoColor(b)
+	log.writer.SetNoColor(b)
 }
 
 // Close the file associated with the log
 // (关闭日志绑定的文件)
 func (log *GLoggerCore) closeFile() {
-	if log.fw != nil {
-		err := log.fw.Close()
+	if log.writer != nil {
+		err := log.writer.Close()
 		if err != nil {
 			//fmt.Println("log关闭失败", err)
 		} else {

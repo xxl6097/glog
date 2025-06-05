@@ -10,8 +10,8 @@ import (
 )
 
 func hook(data []byte) {
-	newData := data[2:]
-	fmt.Println(string(newData))
+	//newData := data[2:]
+	//fmt.Println(string(newData))
 }
 
 func init() {
@@ -70,6 +70,7 @@ func test() {
 }
 
 func main() {
+	defer glog.GlobalRecover()
 	glog.Println("服务安装成功!")
 	test()
 	glog.Println("hello glog...")
@@ -86,9 +87,10 @@ func main() {
 	//	//glog.Debug("Debug。。。")
 	//	time.Sleep(5 * time.Second)
 	//}
-	glog.Error("wahahhawahahhawahahhawahahhawahahhawahahhawahahhawahahha")
-	glog.ErrorNoCon("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
-	glog.Debug("dece")
+	glog.Error("wahahha")
+	//panic("panic test...")
+	//log.Fatalln("Fatalln test....")
+	//glog.Stack("Stack test.....")
 	for {
 		time.Sleep(time.Second * 10)
 		glog.Debug(time.Now().Format("2006-01-02 15:04:05"))

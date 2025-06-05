@@ -345,3 +345,19 @@ func getFileNameAndFileExtension(filePath string) (string, string) {
 	//Println("扩展名:", fileExtension)
 	return fileNameWithoutExtension, fileExtension
 }
+
+// GlobalRecover 日志库核心代码
+func GlobalRecover() {
+	if r := recover(); r != nil {
+		//stack := debug.Stack()
+		//logLib.Fatal("PANIC",
+		//	zap.Any("error", r),
+		//	zap.ByteString("stack", stack),
+		//	zap.String("time", time.Now().Format(time.RFC3339Nano))
+		//)
+		//Error("err:", r)
+		//Error("stack:", string(stack))
+		Stack(r)
+		_ = Flush()
+	}
+}
