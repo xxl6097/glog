@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"time"
 )
 
 const (
@@ -106,7 +105,8 @@ file: The file name of the source code invoking the log function.
 line: The line number of the source code invoking the log function.
 level: The log level of the current log entry.
 */
-func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, line int, level int) []byte {
+func (log *GLoggerCore) formatHeader(file string, funcname string, line int, level int) []byte {
+	now := Now()
 	//var buffer bytes.Buffer
 	buf := bytes.NewBuffer([]byte{})
 	//var buf *bytes.Buffer = &log.buf
@@ -121,7 +121,7 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 	if log.flag&(BitDate|BitTime|BitMicroSeconds|BitMilliseconds) != 0 {
 		// Date flag is set
 		if log.flag&BitDate != 0 {
-			year, month, day := t.Date()
+			year, month, day := now.Date()
 			itoa(buf, year, 4)
 			buf.WriteByte('/') // "2019/"
 			itoa(buf, int(month), 2)
@@ -132,7 +132,7 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 
 		// Time flag is set
 		if log.flag&(BitTime|BitMicroSeconds) != 0 {
-			hour, min, sec := t.Clock()
+			hour, min, sec := now.Clock()
 			itoa(buf, hour, 2)
 			buf.WriteByte(':') // "11:"
 			itoa(buf, min, 2)
@@ -141,15 +141,15 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 			// Microsecond flag is set
 			if log.flag&BitMicroSeconds != 0 {
 				buf.WriteByte('.')
-				itoa(buf, t.Nanosecond()/1e3, 6) // "11:15:33.123123
+				itoa(buf, now.Nanosecond()/1e3, 6) // "11:15:33.123123
 			} else if log.flag&BitMilliseconds != 0 {
 				buf.WriteByte('.')
-				milliseconds := t.Nanosecond() / 1e6 // 获取当前时间的毫秒部分（0-999）
-				itoa(buf, int(milliseconds), 3)      // "11:15:33.123123
+				milliseconds := now.Nanosecond() / 1e6 // 获取当前时间的毫秒部分（0-999）
+				itoa(buf, int(milliseconds), 3)        // "11:15:33.123123
 			}
 			buf.WriteByte(' ')
 		} else if log.flag&(BitTime|BitMilliseconds) != 0 {
-			hour, min, sec := t.Clock()
+			hour, min, sec := now.Clock()
 			itoa(buf, hour, 2)
 			buf.WriteByte(':') // "11:"
 			itoa(buf, min, 2)
@@ -158,7 +158,7 @@ func (log *GLoggerCore) formatHeader(t time.Time, file string, funcname string, 
 			// Microsecond flag is set
 			if log.flag&BitMilliseconds != 0 {
 				buf.WriteByte('.')
-				itoa(buf, int(t.UnixMilli()), 3) // "11:15:33.123123
+				itoa(buf, int(now.UnixMilli()), 3) // "11:15:33.123123
 			}
 			buf.WriteByte(' ')
 		}
@@ -209,7 +209,6 @@ func (log *GLoggerCore) Flush() error {
 
 // OutPut outputs log file, the original method
 func (log *GLoggerCore) OutPut(level int, s string) error {
-	now := time.Now() // get current time
 	var funcName string
 	var file string // file name of the current caller of the log interface
 	var line int    // file name of the current caller of the log interface
@@ -237,7 +236,7 @@ func (log *GLoggerCore) OutPut(level int, s string) error {
 	log.buf.Reset()
 	log.buf.WriteByte(byte(level))
 	// write log header
-	headers := log.formatHeader(now, file, funcName, line, level)
+	headers := log.formatHeader(file, funcName, line, level)
 	length := byte(len(headers))
 	//headbuf := []byte{byte((length >> 24) & 0xFF), byte((length >> 16) & 0xFF), byte((length >> 8) & 0xFF), byte(length & 0xFF)}
 	log.buf.WriteByte(length)

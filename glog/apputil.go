@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 )
 
 var serviceName = "aalog"
@@ -81,4 +82,14 @@ func TextToFile(filePath string, content string) {
 
 	_, err = file.WriteString(fmt.Sprintf("%s\n", content)) // 直接写入字符串
 	// 或写入字节切片：file.Write([]byte("data"))
+}
+
+func Now() time.Time {
+	loc, err := time.LoadLocation("Asia/Shanghai") // 等价于 UTC+8
+	if err != nil {
+		loc = time.FixedZone("CST", 8*3600) // 东八区
+	}
+	now := time.Now()
+	beijingTime := now.In(loc)
+	return beijingTime
 }
