@@ -221,6 +221,9 @@ func Panic(v ...interface{}) {
 func Stack(v ...interface{}) {
 	StdGLog.Stack(v...)
 }
+func IsLogSave() bool {
+	return StdGLog.IsLogSave()
+}
 
 func init() {
 	// (因为StdGLog对象 对所有输出方法做了一层包裹，所以在打印调用函数的时候，比正常的logger对象多一层调用
@@ -348,6 +351,9 @@ func getFileNameAndFileExtension(filePath string) (string, string) {
 
 // GlobalRecover 日志库核心代码
 func GlobalRecover() {
+	if !IsLogSave() {
+		LogDefaultLogSetting("err.log")
+	}
 	if r := recover(); r != nil {
 		//stack := debug.Stack()
 		//logLib.Fatal("PANIC",

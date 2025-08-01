@@ -496,6 +496,10 @@ func (log *GLoggerCore) SetLogFile(fileDir string, fileName string) {
 	//log.fw = New(log.out, filepath.Join(fileDir, fileName))
 }
 
+func (log *GLoggerCore) IsLogSave() bool {
+	return log.writer.IsLogSave()
+}
+
 // SetMaxAge 最大保留天数
 func (log *GLoggerCore) SetMaxAge(ma int) {
 	if log.writer == nil {

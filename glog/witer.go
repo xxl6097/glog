@@ -136,6 +136,13 @@ func (w *Writer) Write(buffer []byte) (n int, err error) {
 	return
 }
 
+func (w *Writer) IsLogSave() bool {
+	if w.logWriter != nil {
+		return true
+	}
+	return false
+}
+
 func (w *Writer) Close() error {
 	err := w.flush()
 	err = w.close()
