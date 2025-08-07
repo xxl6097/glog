@@ -22,24 +22,24 @@ func NameByPath(appPath string) string {
 	if ext := filepath.Ext(appName); ext != "" {
 		appName = strings.TrimSuffix(appName, ext)
 	}
-	//if strings.Contains(appName, "_") {
-	//	arr := strings.Split(appName, "_")
-	//	if arr != nil && len(arr) > 0 {
-	//		appName = arr[0]
-	//	}
-	//}
-	//if strings.Contains(appName, "-") {
-	//	arr := strings.Split(appName, "-")
-	//	if arr != nil && len(arr) > 0 {
-	//		appName = arr[0]
-	//	}
-	//}
-	//if strings.Contains(appName, ".") {
-	//	arr := strings.Split(appName, ".")
-	//	if arr != nil && len(arr) > 0 {
-	//		appName = arr[0]
-	//	}
-	//}
+	if strings.Contains(appName, "_") {
+		arr := strings.Split(appName, "_")
+		if arr != nil && len(arr) > 0 {
+			appName = arr[0]
+		}
+	}
+	if strings.Contains(appName, "-") {
+		arr := strings.Split(appName, "-")
+		if arr != nil && len(arr) > 0 {
+			appName = arr[0]
+		}
+	}
+	if strings.Contains(appName, ".") {
+		arr := strings.Split(appName, ".")
+		if arr != nil && len(arr) > 0 {
+			appName = arr[0]
+		}
+	}
 	return appName
 }
 func AppName() string {

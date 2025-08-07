@@ -352,7 +352,7 @@ func getFileNameAndFileExtension(filePath string) (string, string) {
 // GlobalRecover 日志库核心代码
 func GlobalRecover() {
 	if !IsLogSave() {
-		LogDefaultLogSetting("err.log")
+		LogDefaultLogSetting("panic.log")
 	}
 	if r := recover(); r != nil {
 		//stack := debug.Stack()
