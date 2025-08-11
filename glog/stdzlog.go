@@ -359,8 +359,8 @@ func GlobalRecover() {
 	if !IsLogSave() {
 		LogDefaultLogSetting("panic.log")
 	}
+	fmt.Println("logFile ", GetLogFile())
 	if r := recover(); r != nil {
-		fmt.Println("logFile ", GetLogFile())
 		stack := debug.Stack()
 		//logLib.Fatal("PANIC",
 		//	zap.Any("error", r),
