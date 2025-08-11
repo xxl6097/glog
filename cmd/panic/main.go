@@ -7,7 +7,8 @@ import (
 
 func main() {
 	defer glog.GlobalRecover()
-	glog.Debug(glog.AppHome())
+	glog.Debug("AppHome", glog.AppHome())
+	glog.Debug("AppName", glog.AppName())
 	glog.Debug("test is now...")
 	time.Sleep(5 * time.Second)
 	glog.Debug("test is now...1")
