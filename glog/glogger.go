@@ -74,6 +74,8 @@ type GLoggerCore struct {
 	writer *Writer
 
 	onLogHook func([]byte)
+
+	logFile string
 }
 
 func NewGLog(out io.Writer, prefix string, flag int) *GLoggerCore {
@@ -433,7 +435,7 @@ func (log *GLoggerCore) Panic(v ...interface{}) {
 	panic(s)
 }
 
-func (log *GLoggerCore) Stack(v ...interface{}) {
+func (log *GLoggerCore) Stack(v ...interface{}) string {
 	s := fmt.Sprint(v...)
 	s += "\n"
 	buf := make([]byte, LOG_MAX_BUF)
@@ -441,6 +443,7 @@ func (log *GLoggerCore) Stack(v ...interface{}) {
 	s += string(buf[:n])
 	s += "\n"
 	_ = log.OutPut(LogError, s)
+	return s
 }
 
 // Flags gets the current log bitmap flags
@@ -494,10 +497,14 @@ func (log *GLoggerCore) SetLogFile(fileDir string, fileName string) {
 	}
 	logFile := filepath.Join(fileDir, fileName)
 	fmt.Println("logFile:", logFile)
+	log.logFile = logFile
 	log.writer.SetLogFile(logFile)
 	//log.fw = New(log.out, filepath.Join(fileDir, fileName))
 }
 
+func (log *GLoggerCore) GetLogFile() string {
+	return log.logFile
+}
 func (log *GLoggerCore) IsLogSave() bool {
 	return log.writer.IsLogSave()
 }

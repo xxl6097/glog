@@ -70,6 +70,10 @@ func LogDefaultLogSetting(logFileName string) {
 	AddFlag(BitMilliseconds)
 }
 
+func GetLogFile() string {
+	return StdGLog.GetLogFile()
+}
+
 func LogSetting(logDir, logFileName string) {
 	StdGLog.SetLogFile(logDir, logFileName)
 	SetCons(true)               //需要控制台打印
@@ -218,8 +222,8 @@ func Panic(v ...interface{}) {
 	StdGLog.Panic(v...)
 }
 
-func Stack(v ...interface{}) {
-	StdGLog.Stack(v...)
+func Stack(v ...interface{}) string {
+	return StdGLog.Stack(v...)
 }
 func IsLogSave() bool {
 	return StdGLog.IsLogSave()
@@ -355,6 +359,7 @@ func GlobalRecover() {
 		LogDefaultLogSetting("panic.log")
 	}
 	if r := recover(); r != nil {
+		fmt.Println("logFile ", GetLogFile())
 		//stack := debug.Stack()
 		//logLib.Fatal("PANIC",
 		//	zap.Any("error", r),
@@ -363,6 +368,7 @@ func GlobalRecover() {
 		//)
 		//Error("err:", r)
 		//Error("stack:", string(stack))
+		//Error(Stack(r))
 		Stack(r)
 		_ = Flush()
 	}
