@@ -492,7 +492,9 @@ func (log *GLoggerCore) SetLogFile(fileDir string, fileName string) {
 			//fmt.Println(err)
 		}
 	}
-	log.writer.SetLogFile(filepath.Join(fileDir, fileName))
+	logFile := filepath.Join(fileDir, fileName)
+	fmt.Println("logFile:", logFile)
+	log.writer.SetLogFile(logFile)
 	//log.fw = New(log.out, filepath.Join(fileDir, fileName))
 }
 
