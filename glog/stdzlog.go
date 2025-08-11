@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"time"
 )
@@ -360,16 +361,16 @@ func GlobalRecover() {
 	}
 	if r := recover(); r != nil {
 		fmt.Println("logFile ", GetLogFile())
-		//stack := debug.Stack()
+		stack := debug.Stack()
 		//logLib.Fatal("PANIC",
 		//	zap.Any("error", r),
 		//	zap.ByteString("stack", stack),
 		//	zap.String("time", time.Now().Format(time.RFC3339Nano))
 		//)
 		//Error("err:", r)
-		//Error("stack:", string(stack))
+		Error("stack:", string(stack))
 		//Error(Stack(r))
-		Stack(r)
+		//Stack(r)
 		_ = Flush()
 	}
 }
