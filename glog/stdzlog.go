@@ -136,6 +136,12 @@ func DebugNoCon(v ...interface{}) {
 	StdGLog.DebugNoCon(v...)
 }
 
+func LogToFile(v ...interface{}) {
+	StdGLog.LogToFile(v...)
+}
+func LogToFilef(format string, a ...any) {
+	StdGLog.LogToFilef(format, a...)
+}
 func Println(a ...any) {
 	StdGLog.Info(a...)
 }

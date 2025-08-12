@@ -252,17 +252,6 @@ func (log *GLoggerCore) OutPut(level int, s string) error {
 	}
 	//infoStr = Green + "%s\n" + Reset + Green + "[info] " + Reset
 	var err error
-	//if log.fw == nil {
-	//	// if log file is not set, output to console
-	//	_, _ = log.out.Write(log.buf.Bytes())
-	//	//PrintLog(level, log.out, log.buf.Bytes())
-	//} else {
-	//	// write the filled buffer to IO output
-	//}
-	//log.fw.WriteInConsole(level, log.buf.Bytes())
-	//if log.fw == nil {
-	//	log.fw = New(log.out, filepath.Join(AppHome(), "app.log"))
-	//}
 	_, err = log.writer.Write(log.buf.Bytes())
 	if log.onLogHook != nil {
 		log.onLogHook(log.buf.Bytes())
@@ -308,6 +297,18 @@ func (log *GLoggerCore) DebugNoCon(v ...interface{}) {
 	level := LogDebug
 	level |= 0x08
 	_ = log.OutPut(level, fmt.Sprintln(v...))
+}
+
+func (log *GLoggerCore) LogToFile(v ...interface{}) {
+	level := LogDebug
+	level |= 0x02
+	_ = log.OutPut(level, fmt.Sprintln(v...))
+}
+
+func (log *GLoggerCore) LogToFilef(format string, v ...interface{}) {
+	level := LogDebug
+	level |= 0x02
+	_ = log.OutPut(level, fmt.Sprintf(format, v...))
 }
 
 func (log *GLoggerCore) Infof(format string, v ...interface{}) {
