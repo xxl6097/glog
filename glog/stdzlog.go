@@ -354,8 +354,8 @@ func getFileNameAndFileExtension(filePath string) (string, string) {
 	return fileNameWithoutExtension, fileExtension
 }
 
-// GlobalRecover 日志库核心代码
-func GlobalRecover() {
+// globalRecover 日志库核心代码
+func globalRecover() {
 	if !IsLogSave() {
 		LogDefaultLogSetting("panic.log")
 	}
