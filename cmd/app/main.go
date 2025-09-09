@@ -70,7 +70,7 @@ func test() {
 }
 
 func main() {
-	defer glog.GlobalRecover()
+	//defer glog.GlobalRecover()
 	glog.Println("服务安装成功!")
 	test()
 	glog.Println("hello glog...")
@@ -92,7 +92,7 @@ func main() {
 	//log.Fatalln("Fatalln test....")
 	//glog.Stack("Stack test.....")
 	for {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 1)
 		glog.Debug(time.Now().Format("2006-01-02 15:04:05"))
 	}
 	glog.CloseLog()

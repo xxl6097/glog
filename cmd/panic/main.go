@@ -15,5 +15,5 @@ func main() {
 	glog.LogToFile("aaa.log")
 	time.Sleep(5 * time.Second)
 	glog.Debug("test is now...1")
-	panic("err.ooiefrer")
+	//panic("err.ooiefrer")
 }
