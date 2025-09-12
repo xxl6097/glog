@@ -80,18 +80,17 @@ func (w *LogWriter) Write(p []byte) (int, error) {
 			return 0, err1
 		}
 	}
-
-	t := time.Now()
-	var b []byte
-	year, month, day := t.Date()
-	b = appendInt(b, year, 4)
-	b = append(b, '-')
-	b = appendInt(b, int(month), 2)
-	b = append(b, '-')
-	b = appendInt(b, day, 2)
-
+	//t := time.Now()
+	//var b []byte
+	//year, month, day := t.Date()
+	//b = appendInt(b, year, 4)
+	//b = append(b, '-')
+	//b = appendInt(b, int(month), 2)
+	//b = append(b, '-')
+	//b = appendInt(b, day, 2)
+	b := Now().AppendFormat(nil, time.RFC3339)
 	// 按天切割
-	if !bytes.Equal(w.creates[:10], b) { //2023-04-05
+	if !bytes.Equal(w.creates[:10], b[:10]) { //2023-04-05
 		go w.delete() // 每天检测一次旧文件
 		if err := w.rotate(); err != nil {
 			return 0, err
@@ -110,7 +109,7 @@ func (w *LogWriter) Write(p []byte) (int, error) {
 
 // rotate 切割文件
 func (w *LogWriter) rotate() error {
-	now := time.Now()
+	//now := Now()
 	fsuffix := filepath.Ext(w.logPath)
 	fdir := filepath.Dir(w.logPath)
 	fname := strings.TrimSuffix(filepath.Base(w.logPath), fsuffix) //app
@@ -144,10 +143,11 @@ func (w *LogWriter) rotate() error {
 	}
 
 	fInfo, err := os.Stat(w.logPath)
-	w.created = now
 	if err == nil {
 		w.size = fInfo.Size()
 		w.created = fInfo.ModTime()
+	} else {
+		w.created = Now()
 	}
 	w.creates = w.created.AppendFormat(nil, time.RFC3339)
 	fout, err := os.OpenFile(w.logPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
