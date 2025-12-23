@@ -222,8 +222,8 @@ func (w *LogWriter) name2time(name string) (time.Time, error) {
 	name = strings.TrimPrefix(name, filepath.Base(w.logFileName))
 	name = strings.TrimSuffix(name, w.logZipsuffix)
 	//return time.Parse(".2006-01-02", name)
-	return time.Parse(".20060102150405", name)
+	return time.Parse(".2006-01-02_150405", name)
 }
 func (w *LogWriter) time2name(t time.Time) string {
-	return t.Format(".20060102150405")
+	return t.Format(".2006-01-02_150405")
 }
