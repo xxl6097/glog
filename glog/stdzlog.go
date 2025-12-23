@@ -66,6 +66,18 @@ func LogDefaultLogSetting(logFileName string) {
 	LogDefaultLogSettingEveryType(logFileName, 0)
 }
 
+func IsLogDirExist() bool {
+	logDir := AppHome("log")
+	info, err := os.Stat(logDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+		return false
+	}
+	return info.IsDir()
+}
+
 // LogDefaultLogSettingEveryType everyType 0：每天，1：每小时，2：每10分钟，3：每分钟 （切割文件）
 func LogDefaultLogSettingEveryType(logFileName string, everyType int) {
 	logDir := AppHome("log")
