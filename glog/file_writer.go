@@ -90,7 +90,7 @@ func (w *LogWriter) Write(p []byte) (int, error) {
 	//b = appendInt(b, day, 2)
 	b := Now().AppendFormat(nil, time.RFC3339)
 	// 按天切割
-	if !bytes.Equal(w.creates[:10], b[:10]) { //2023-04-05
+	if !bytes.Equal(w.creates[:15], b[:15]) { //2023-04-05//10
 		go w.delete() // 每天检测一次旧文件
 		if err := w.rotate(); err != nil {
 			return 0, err

@@ -45,7 +45,7 @@ func ResetFlags(flag int) {
 	StdGLog.ResetFlags(flag)
 }
 
-// 设置打印时间戳到毫秒
+// AddFlag 设置打印时间戳到毫秒
 func AddFlag(flag int) {
 	StdGLog.AddFlag(flag)
 }
