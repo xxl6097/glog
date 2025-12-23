@@ -29,9 +29,11 @@ type LogWriter struct {
 	MaxSize       int64  // 单个日志最大容量 默认 64MB
 	creates       []byte // 文件创建日期
 	DaemonSecond  int    // 日志多久一次写文件，单位秒
+	EveryType     int    // 0：每天，1：每小时，2：每10分钟，3：每分钟
 }
 
-func NewFileWriter(logPath string) *LogWriter {
+// NewFileWriter everyType 0：每天，1：每小时，2：每10分钟，3：每分钟
+func NewFileWriter(logPath string, everyType int) *LogWriter {
 	fsuffix := filepath.Ext(logPath)                             //.log
 	fname := strings.TrimSuffix(filepath.Base(logPath), fsuffix) //app
 	if fsuffix == "" {
@@ -50,6 +52,7 @@ func NewFileWriter(logPath string) *LogWriter {
 		logZipsuffix:  ".zip",
 		DaemonSecond:  5,
 		logFileBuffer: bufio.NewWriter(os.Stdout),
+		EveryType:     everyType,
 	}
 	go logWriter.daemon()
 	return logWriter
@@ -89,8 +92,17 @@ func (w *LogWriter) Write(p []byte) (int, error) {
 	//b = append(b, '-')
 	//b = appendInt(b, day, 2)
 	b := Now().AppendFormat(nil, time.RFC3339)
-	// 按天切割
-	if !bytes.Equal(w.creates[:15], b[:15]) { //2023-04-05//10
+	end := 10 //每天
+	if w.EveryType == 1 {
+		end = 13 //每小时
+	} else if w.EveryType == 2 {
+		end = 15 //每10分钟
+	} else if w.EveryType == 3 {
+		end = 16 //每分钟
+	}
+	// 按天切割 10:每天，13：每小时，15：每10分钟，16：每分钟
+	//if !bytes.Equal(w.creates[:15], b[:15]) { //每10分钟切割一次
+	if !bytes.Equal(w.creates[:end], b[:end]) { //2023-04-05//10
 		go w.delete() // 每天检测一次旧文件
 		if err := w.rotate(); err != nil {
 			return 0, err
@@ -209,8 +221,29 @@ func (w *LogWriter) Flush() error {
 func (w *LogWriter) name2time(name string) (time.Time, error) {
 	name = strings.TrimPrefix(name, filepath.Base(w.logFileName))
 	name = strings.TrimSuffix(name, w.logZipsuffix)
+	//return time.Parse(".2006-01-02", name)
+	if w.EveryType == 1 {
+		//每小时
+		return time.Parse(".2006-01-02 15", name)
+	} else if w.EveryType == 2 {
+		//每10分钟
+		return time.Parse(".2006-01-02 15:0", name)
+	} else if w.EveryType == 3 {
+		//每分钟
+		return time.Parse(".2006-01-02 15:04", name)
+	}
 	return time.Parse(".2006-01-02", name)
 }
 func (w *LogWriter) time2name(t time.Time) string {
+	if w.EveryType == 1 {
+		//每小时
+		return t.Format(".2006-01-02 15")
+	} else if w.EveryType == 2 {
+		//每10分钟
+		return t.Format(".2006-01-02 15:0")
+	} else if w.EveryType == 3 {
+		//每分钟
+		return t.Format(".2006-01-02 15:04")
+	}
 	return t.Format(".2006-01-02")
 }

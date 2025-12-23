@@ -490,6 +490,10 @@ func (log *GLoggerCore) SetNoHeader(yes bool) {
 // SetLogFile sets the log file output
 // (设置日志文件输出)
 func (log *GLoggerCore) SetLogFile(fileDir string, fileName string) {
+	log.SetLogFileEveryType(fileDir, fileName, 0)
+}
+
+func (log *GLoggerCore) SetLogFileEveryType(fileDir string, fileName string, everyType int) {
 	if log.writer != nil {
 		err := log.writer.Close()
 		if err != nil {
@@ -499,7 +503,7 @@ func (log *GLoggerCore) SetLogFile(fileDir string, fileName string) {
 	logFile := filepath.Join(fileDir, fileName)
 	fmt.Println("logFile:", logFile)
 	log.logFile = logFile
-	log.writer.SetLogFile(logFile)
+	log.writer.SetLogFileEveryType(logFile, everyType)
 	//log.fw = New(log.out, filepath.Join(fileDir, fileName))
 }
 

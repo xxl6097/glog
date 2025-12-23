@@ -55,7 +55,7 @@ func SetPrefix(prefix string) {
 }
 
 func SetLogFile(fileDir string, fileName string) {
-	StdGLog.SetLogFile(fileDir, fileName)
+	StdGLog.SetLogFileEveryType(fileDir, fileName, 0)
 }
 
 func LogSaveFile() {
@@ -63,8 +63,13 @@ func LogSaveFile() {
 }
 
 func LogDefaultLogSetting(logFileName string) {
+	LogDefaultLogSettingEveryType(logFileName, 0)
+}
+
+// LogDefaultLogSettingEveryType everyType 0：每天，1：每小时，2：每10分钟，3：每分钟 （切割文件）
+func LogDefaultLogSettingEveryType(logFileName string, everyType int) {
 	logDir := AppHome("log")
-	StdGLog.SetLogFile(logDir, logFileName)
+	StdGLog.SetLogFileEveryType(logDir, logFileName, everyType)
 	SetCons(true)               //需要控制台打印
 	SetMaxAge(7)                //默认保存7天
 	SetMaxSize(1 * 1024 * 1024) //1MB

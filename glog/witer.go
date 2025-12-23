@@ -41,8 +41,12 @@ func New(out io.Writer) *Writer {
 	return w
 }
 
-func (w *Writer) SetLogFile(logFile string) {
-	w.logWriter = NewFileWriter(logFile)
+//func (w *Writer) SetLogFile(logFile string) {
+//	w.SetLogFileEveryType(logFile,0)
+//}
+
+func (w *Writer) SetLogFileEveryType(logFile string, everyType int) {
+	w.logWriter = NewFileWriter(logFile, everyType)
 }
 
 // SetMaxAge 最大保留天数

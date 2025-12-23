@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/xxl6097/glog/glog"
 	"time"
+
+	"github.com/xxl6097/glog/glog"
 )
 
 func main() {
 	glog.LogDefaultLogSetting("aaa.log")
 	//defer glog.GlobalRecover()
-	glog.Debug("AppHome", glog.AppHome())
+	//glog.Debug("AppHome", glog.AppHome())
 	glog.Debug("AppName", glog.AppName())
 	glog.Debug("test is now...")
 	glog.Debug("bbbbbbbbbb")
