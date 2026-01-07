@@ -108,9 +108,9 @@ func (w *Writer) Write(buffer []byte) (n int, err error) {
 	p := buffer[2:] //第一字节是level，第二字节是header长度
 	index := buffer[0]
 	isCons := index >> 3
-	printToConsole := index >> 1
+	//printToConsole := index >> 1
 	header_size := buffer[1]
-	if w.cons && printToConsole == 0 {
+	if w.cons { //&& printToConsole == 0
 		var buf bytes.Buffer
 		if !w.nocolor {
 			index &= 0x07
@@ -137,9 +137,9 @@ func (w *Writer) Write(buffer []byte) (n int, err error) {
 	}
 	if w.logWriter != nil {
 		n, err = w.logWriter.Write(p)
-		if printToConsole == 1 {
-			_ = w.logWriter.Flush()
-		}
+		//if printToConsole == 1 {
+		_ = w.logWriter.Flush()
+		//}
 	}
 	return
 }
