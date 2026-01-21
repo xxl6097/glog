@@ -11,6 +11,8 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var ZapLogger1 *zap.Logger
+
 func create(fwriter io.Writer) *zap.Logger {
 	env := strings.ToLower(os.Getenv("APP_ENV"))
 	switch env {
@@ -24,8 +26,8 @@ func create(fwriter io.Writer) *zap.Logger {
 }
 
 func LoadLogConfig(fwriter *lumberjack.Logger) {
-	logger := create(fwriter)
-	defer logger.Sync()
+	ZapLogger1 = create(fwriter)
+	defer ZapLogger1.Sync()
 }
 
 func LoadLogDefault() {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/xxl6097/glog/pkg/glog"
+	"github.com/xxl6097/glog/pkg/z"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -60,12 +60,16 @@ func init() {
 	//zap.ReplaceGlobals(zap.Must(zap.NewDevelopment()))
 	//zap.ReplaceGlobals(zap.Must(internal.Logger.Create(), nil))
 	//internal.InitLogger()
-	glog.LoadLogDefault()
+	//glog.LoadLogDefault()
+	z.InitZapLogger(z.FileConfig(func(cfg *z.LogConfig) {
+		cfg.Level = "debug"
+	}))
+
 }
 func main() {
 	//logger := internal.Logger.Create()
 	//defer logger.Sync()
 	//logger.Info("info...")
-	zap.L().Info("zap.L().Info")
-	zap.L().Debug("测试", zap.String("username", "tinG"))
+	//zlog.ZapLogger.Info("z============")
+	z.Log().Debug("测试", zap.String("username", "tinG"))
 }
