@@ -103,7 +103,7 @@ func initZapLogger(cfg *LogConfig) {
 	//ZapLogger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(0), zap.AddStacktrace(zap.ErrorLevel))
 	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
 	//SugaredLogger = ZapLogger.Sugar()
-	logger.Info("logger init success")
+	//logger.Info("logger init success")
 	zap.ReplaceGlobals(logger)
 }
 
