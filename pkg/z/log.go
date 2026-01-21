@@ -10,8 +10,31 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-// InitZapLogger 初始化日志
-func InitZapLogger(cfg *LogConfig) {
+func LoadDefaultLogger() {
+	initZapLogger(&LogConfig{
+		Level: "debug",
+	})
+}
+
+func LoadLogger(fn func(conf *LogConfig)) {
+	cfg := &LogConfig{
+		Level:            "debug",
+		Path:             "./logs/app.log",
+		ErrorPath:        "./logs/error.log",
+		MaxSize:          100,
+		MaxBackups:       30,
+		MaxAge:           7,
+		Compress:         true,
+		SeparateErrorLog: true,
+	}
+	if fn != nil {
+		fn(cfg)
+	}
+	initZapLogger(cfg)
+}
+
+// initZapLogger 初始化日志
+func initZapLogger(cfg *LogConfig) {
 	// 设置日志级别
 	var level = getZapLevel(cfg.Level)
 	// 创建编码器配置

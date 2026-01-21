@@ -11,29 +11,29 @@ type LogConfig struct {
 	SeparateErrorLog bool   `yaml:"separateErrorLog"` // 是否分离错误日志
 }
 
-// DefaultConfig 获取日志配置
-func DefaultConfig(fn func(*LogConfig)) *LogConfig {
-	cfg := &LogConfig{
-		Level: "info",
-	}
-	if fn != nil {
-		fn(cfg)
-	}
-	return cfg
-}
-
-func FileConfig(fn func(*LogConfig)) *LogConfig {
-	return DefaultConfig(func(conf *LogConfig) {
-		conf.Level = "info"
-		conf.Path = "./logs/app.log"
-		conf.ErrorPath = "./logs/error.log"
-		conf.MaxSize = 100
-		conf.MaxBackups = 30
-		conf.MaxAge = 7
-		conf.Compress = true
-		conf.SeparateErrorLog = true
-		if fn != nil {
-			fn(conf)
-		}
-	})
-}
+//// DefaultConfig 获取日志配置
+//func DefaultConfig(fn func(*LogConfig)) *LogConfig {
+//	cfg := &LogConfig{
+//		Level: "info",
+//	}
+//	if fn != nil {
+//		fn(cfg)
+//	}
+//	return cfg
+//}
+//
+//func FileConfig(fn func(*LogConfig)) *LogConfig {
+//	return DefaultConfig(func(conf *LogConfig) {
+//		conf.Level = "info"
+//		conf.Path = "./logs/app.log"
+//		conf.ErrorPath = "./logs/error.log"
+//		conf.MaxSize = 100
+//		conf.MaxBackups = 30
+//		conf.MaxAge = 7
+//		conf.Compress = true
+//		conf.SeparateErrorLog = true
+//		if fn != nil {
+//			fn(conf)
+//		}
+//	})
+//}
