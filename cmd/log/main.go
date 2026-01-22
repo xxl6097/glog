@@ -64,6 +64,9 @@ func init() {
 	z.LoadLogger(func(cfg *z.LogConfig) {
 		cfg.Level = "debug"
 	})
+	z.Hook = func(entry zapcore.Entry) error {
+		return nil
+	}
 
 }
 func main() {
@@ -71,5 +74,5 @@ func main() {
 	//defer logger.Sync()
 	//logger.Info("info...")
 	//zlog.ZapLogger.Info("z============")
-	z.L().Debug("测试", zap.String("username", "tinG"))
+	z.L().Debug("qqq测试", zap.String("username", "tinG"))
 }

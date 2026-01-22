@@ -10,6 +10,8 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var Hook func(zapcore.Entry) error
+
 func LoadDefaultLogger() {
 	initZapLogger(&LogConfig{
 		Level: "debug",
@@ -63,7 +65,13 @@ func initZapLogger(cfg *LogConfig) {
 	core := zapcore.NewTee(cores...)
 	// 创建 Logger
 	//ZapLogger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(0), zap.AddStacktrace(zap.ErrorLevel))
-	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
+	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel),
+		zap.Hooks(func(entry zapcore.Entry) error {
+			if Hook != nil {
+				return Hook(entry)
+			}
+			return nil
+		}))
 	//SugaredLogger = ZapLogger.Sugar()
 	//logger.Info("logger init success")
 	zap.ReplaceGlobals(logger)
