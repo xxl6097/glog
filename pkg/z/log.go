@@ -128,13 +128,14 @@ func consoleEncoderConfig(color bool) zapcore.EncoderConfig {
 		LevelKey:  "level",
 		NameKey:   "logger",
 		CallerKey: "caller",
-		//FunctionKey:    "function", // 添加函数名
+		//FunctionKey: "function", // 添加函数名
 		FunctionKey:    zapcore.OmitKey,
 		MessageKey:     "msg",
 		StacktraceKey:  "stacktrace",
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeTime:     customTimeEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder, // 短路径
 	}
 
 	if color {
