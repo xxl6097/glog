@@ -37,23 +37,25 @@ func LoadLogger(fn func(conf *LogConfig)) {
 func initZapLogger(cfg *LogConfig) {
 	// 设置日志级别
 	var level = getZapLevel(cfg.Level)
-	var encoder zapcore.Encoder
+	var consoleEncoder, fileEncoder zapcore.Encoder
 	env := strings.ToLower(os.Getenv("APP_ENV"))
 	switch env {
 	case "prod", "production":
-		encoder = zapcore.NewJSONEncoder(jsonEncoderConfig())
+		consoleEncoder = zapcore.NewJSONEncoder(jsonEncoderConfig())
+		fileEncoder = consoleEncoder
 	default:
-		encoder = zapcore.NewConsoleEncoder(consoleEncoderConfig(true))
+		consoleEncoder = zapcore.NewConsoleEncoder(consoleEncoderConfig(true))
+		fileEncoder = zapcore.NewConsoleEncoder(consoleEncoderConfig(false))
 	}
 	// 创建核心列表
 	var cores []zapcore.Core
-	cores = append(cores, createMainCore(encoder, level))
+	cores = append(cores, createMainCore(consoleEncoder, level))
 	if cfg.Path != "" {
-		fileCore := createNormalCore(cfg, encoder, level)
+		fileCore := createNormalCore(cfg, fileEncoder, level)
 		cores = append(cores, fileCore)
 	}
 	if cfg.SeparateErrorLog && cfg.ErrorPath != "" {
-		errorCore := createErrorCore(cfg, encoder, zap.ErrorLevel)
+		errorCore := createErrorCore(cfg, fileEncoder, zap.ErrorLevel)
 		cores = append(cores, errorCore)
 	}
 
