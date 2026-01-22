@@ -47,9 +47,7 @@ func initZapLogger(cfg *LogConfig) {
 	}
 	// 创建核心列表
 	var cores []zapcore.Core
-	consoleWriter := zapcore.Lock(zapcore.AddSync(os.Stdout))
-	mainCore := zapcore.NewCore(encoder, consoleWriter, level)
-	cores = append(cores, mainCore)
+	cores = append(cores, createMainCore(encoder, level))
 	if cfg.Path != "" {
 		fileCore := createNormalCore(cfg, encoder, level)
 		cores = append(cores, fileCore)
@@ -67,6 +65,11 @@ func initZapLogger(cfg *LogConfig) {
 	//SugaredLogger = ZapLogger.Sugar()
 	//logger.Info("logger init success")
 	zap.ReplaceGlobals(logger)
+}
+
+func createMainCore(encoder zapcore.Encoder, level zapcore.Level) zapcore.Core {
+	consoleWriter := zapcore.Lock(zapcore.AddSync(os.Stdout))
+	return zapcore.NewCore(encoder, consoleWriter, level)
 }
 
 func createNormalCore(cfg *LogConfig, encoder zapcore.Encoder, level zapcore.Level) zapcore.Core {
