@@ -61,9 +61,9 @@ func init() {
 	//zap.ReplaceGlobals(zap.Must(internal.Logger.Create(), nil))
 	//internal.InitLogger()
 	//glog.LoadLogDefault()
-	z.InitZapLogger(z.FileConfig(func(cfg *z.LogConfig) {
+	z.LoadLogger(func(cfg *z.LogConfig) {
 		cfg.Level = "debug"
-	}))
+	})
 
 }
 func main() {
@@ -71,5 +71,5 @@ func main() {
 	//defer logger.Sync()
 	//logger.Info("info...")
 	//zlog.ZapLogger.Info("z============")
-	z.Log().Debug("测试", zap.String("username", "tinG"))
+	z.L().Debug("测试", zap.String("username", "tinG"))
 }
