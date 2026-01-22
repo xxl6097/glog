@@ -169,6 +169,6 @@ func isTerminal1() bool {
 	return result != 0
 }
 
-func Log() *zap.Logger {
+func L() *zap.Logger {
 	return zap.L()
 }
