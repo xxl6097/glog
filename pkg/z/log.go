@@ -37,64 +37,26 @@ func LoadLogger(fn func(conf *LogConfig)) {
 func initZapLogger(cfg *LogConfig) {
 	// 设置日志级别
 	var level = getZapLevel(cfg.Level)
-	// 创建编码器配置
-	encoderConfig := zapcore.EncoderConfig{
-		TimeKey:        "time",
-		LevelKey:       "level",
-		NameKey:        "logger",
-		CallerKey:      "caller",
-		MessageKey:     "msg",
-		FunctionKey:    zapcore.OmitKey,
-		StacktraceKey:  "stacktrace",
-		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.CapitalColorLevelEncoder, // 彩色编码级别
-		EncodeTime:     customTimeEncoder,                // 自定义时间格式
-		EncodeDuration: zapcore.SecondsDurationEncoder,
-		EncodeCaller:   zapcore.ShortCallerEncoder,
-	}
-
-	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
-
-	// 文件编码器（无颜色）
-	var fileEncoder zapcore.Encoder
-	fileConfig := encoderConfig
-	fileConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-
+	var encoder zapcore.Encoder
 	env := strings.ToLower(os.Getenv("APP_ENV"))
 	switch env {
 	case "prod", "production":
-		fileEncoder = zapcore.NewJSONEncoder(fileConfig)
+		encoder = zapcore.NewJSONEncoder(jsonEncoderConfig())
 	default:
-		fileEncoder = zapcore.NewConsoleEncoder(fileConfig)
+		encoder = zapcore.NewConsoleEncoder(consoleEncoderConfig(true))
 	}
-
 	// 创建核心列表
 	var cores []zapcore.Core
 	consoleWriter := zapcore.Lock(zapcore.AddSync(os.Stdout))
-	mainCore := zapcore.NewCore(consoleEncoder, consoleWriter, level)
+	mainCore := zapcore.NewCore(encoder, consoleWriter, level)
 	cores = append(cores, mainCore)
-
 	if cfg.Path != "" {
-		fileWriter := zapcore.Lock(zapcore.AddSync(&lumberjack.Logger{
-			Filename:   cfg.Path,
-			MaxSize:    cfg.MaxSize,
-			MaxBackups: cfg.MaxBackups,
-			MaxAge:     cfg.MaxAge,
-			Compress:   cfg.Compress,
-		}))
-		fileCore := zapcore.NewCore(fileEncoder, fileWriter, level)
+		fileCore := createNormalCore(cfg, encoder, level)
 		cores = append(cores, fileCore)
 	}
 	if cfg.SeparateErrorLog && cfg.ErrorPath != "" {
-		fileWriter := zapcore.Lock(zapcore.AddSync(&lumberjack.Logger{
-			Filename:   cfg.ErrorPath,
-			MaxSize:    cfg.MaxSize,
-			MaxBackups: cfg.MaxBackups,
-			MaxAge:     cfg.MaxAge,
-			Compress:   cfg.Compress,
-		}))
-		core := zapcore.NewCore(fileEncoder, fileWriter, zap.ErrorLevel)
-		cores = append(cores, core)
+		errorCore := createErrorCore(cfg, encoder, zap.ErrorLevel)
+		cores = append(cores, errorCore)
 	}
 
 	// 创建 tee 核心（多路复用）
@@ -105,6 +67,28 @@ func initZapLogger(cfg *LogConfig) {
 	//SugaredLogger = ZapLogger.Sugar()
 	//logger.Info("logger init success")
 	zap.ReplaceGlobals(logger)
+}
+
+func createNormalCore(cfg *LogConfig, encoder zapcore.Encoder, level zapcore.Level) zapcore.Core {
+	fileWriter := zapcore.Lock(zapcore.AddSync(&lumberjack.Logger{
+		Filename:   cfg.Path,
+		MaxSize:    cfg.MaxSize,
+		MaxBackups: cfg.MaxBackups,
+		MaxAge:     cfg.MaxAge,
+		Compress:   cfg.Compress,
+	}))
+	return zapcore.NewCore(encoder, fileWriter, level)
+}
+
+func createErrorCore(cfg *LogConfig, encoder zapcore.Encoder, level zapcore.Level) zapcore.Core {
+	fileWriter := zapcore.Lock(zapcore.AddSync(&lumberjack.Logger{
+		Filename:   cfg.ErrorPath,
+		MaxSize:    cfg.MaxSize,
+		MaxBackups: cfg.MaxBackups,
+		MaxAge:     cfg.MaxAge,
+		Compress:   cfg.Compress,
+	}))
+	return zapcore.NewCore(encoder, fileWriter, level)
 }
 
 // getZapLevel 获取 Zap 日志级别
@@ -130,6 +114,49 @@ func getZapLevel(level string) zapcore.Level {
 // customTimeEncoder 自定义时间格式
 func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05.000"))
+}
+
+// consoleEncoderConfig 控制台编码器配置
+func consoleEncoderConfig(color bool) zapcore.EncoderConfig {
+	encoderConfig := zapcore.EncoderConfig{
+		TimeKey:   "time",
+		LevelKey:  "level",
+		NameKey:   "logger",
+		CallerKey: "caller",
+		//FunctionKey:    "function", // 添加函数名
+		FunctionKey:    zapcore.OmitKey,
+		MessageKey:     "msg",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		EncodeTime:     customTimeEncoder,
+	}
+
+	if color {
+		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	} else {
+		encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	}
+
+	return encoderConfig
+}
+
+// jsonEncoderConfig JSON编码器配置
+func jsonEncoderConfig() zapcore.EncoderConfig {
+	return zapcore.EncoderConfig{
+		TimeKey:        "timestamp",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		FunctionKey:    zapcore.OmitKey,
+		MessageKey:     "message",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.LowercaseLevelEncoder, // 小写level
+		EncodeTime:     zapcore.ISO8601TimeEncoder,    // ISO8601格式
+		EncodeDuration: zapcore.MillisDurationEncoder, // 毫秒
+		EncodeCaller:   zapcore.ShortCallerEncoder,    // 短路径
+	}
 }
 
 // isTerminal 判断是否为终端
