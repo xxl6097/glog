@@ -61,12 +61,13 @@ func init() {
 	//zap.ReplaceGlobals(zap.Must(internal.Logger.Create(), nil))
 	//internal.InitLogger()
 	//glog.LoadLogDefault()
-	z.LoadLogger(func(cfg *z.LogConfig) {
-		cfg.Level = "debug"
-	})
-	z.Hook = func(entry zapcore.Entry) error {
-		return nil
-	}
+
+	//z.LoadLogger(func(cfg *z.LogConfig) {
+	//	cfg.Level = "debug"
+	//})
+	//z.Hook = func(entry zapcore.Entry) error {
+	//	return nil
+	//}
 
 }
 func main() {

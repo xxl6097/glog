@@ -74,7 +74,7 @@ func initZapLogger(cfg *LogConfig) {
 		}))
 	//SugaredLogger = ZapLogger.Sugar()
 	//logger.Info("logger init success")
-	zap.ReplaceGlobals(logger)
+	zap.ReplaceGlobals(logger.Named("glog"))
 }
 
 func createMainCore(encoder zapcore.Encoder, level zapcore.Level) zapcore.Core {
@@ -181,5 +181,9 @@ func isTerminal1() bool {
 }
 
 func L() *zap.Logger {
+	l := zap.L()
+	if l.Name() == "" {
+		LoadDefaultLogger()
+	}
 	return zap.L()
 }
