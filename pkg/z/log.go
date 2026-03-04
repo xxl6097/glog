@@ -172,15 +172,6 @@ func jsonEncoderConfig() zapcore.EncoderConfig {
 		EncodeCaller:   zapcore.ShortCallerEncoder,    // 短路径
 	}
 }
-func Now() time.Time {
-	loc, err := time.LoadLocation("Asia/Shanghai") // 等价于 UTC+8
-	if err != nil {
-		loc = time.FixedZone("CST", 8*3600) // 东八区
-	}
-	now := time.Now()
-	beijingTime := now.In(loc)
-	return beijingTime
-}
 
 // isTerminal 判断是否为终端
 func isTerminal1() bool {
