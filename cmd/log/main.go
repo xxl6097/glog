@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/xxl6097/glog/pkg/z"
@@ -65,9 +67,14 @@ func init() {
 	//z.LoadLogger(func(cfg *z.LogConfig) {
 	//	cfg.Level = "debug"
 	//})
-	//z.Hook = func(entry zapcore.Entry) error {
-	//	return nil
-	//}
+	z.Hook = func(entry zapcore.Entry) error {
+		time := entry.Time.Format(time.DateTime)
+		msg := entry.Message
+		lineNum := entry.Caller.Line
+		filepath.Base(entry.Caller.File)
+		fmt.Printf("%s %s:%d %s", time, filepath.Base(entry.Caller.File), lineNum, msg)
+		return nil
+	}
 
 }
 func main() {
