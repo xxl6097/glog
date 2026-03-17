@@ -46,6 +46,6 @@ func Printf(format string, v ...interface{}) {
 	L().Debug(fmt.Sprintf(format, v...))
 }
 
-func Println(format string, v ...interface{}) {
+func Println(v ...interface{}) {
 	L().Debug(fmt.Sprintln(v...))
 }
