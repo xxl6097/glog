@@ -41,3 +41,11 @@ func Fatalf(format string, v ...interface{}) {
 func Fatal(v ...interface{}) {
 	L().Fatal(fmt.Sprintln(v...))
 }
+
+func Printf(format string, v ...interface{}) {
+	L().Debug(fmt.Sprintf(format, v...))
+}
+
+func Println(format string, v ...interface{}) {
+	L().Debug(fmt.Sprintln(v...))
+}
