@@ -1,6 +1,7 @@
 package z
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -33,6 +34,7 @@ func LoadLogger(fn func(conf *LogConfig)) {
 		fn(cfg)
 	}
 	initZapLogger(cfg)
+	fmt.Printf("Load logger config: %+v\n", cfg)
 }
 
 // initZapLogger 初始化日志

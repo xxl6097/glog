@@ -64,9 +64,9 @@ func init() {
 	//internal.InitLogger()
 	//glog.LoadLogDefault()
 
-	//z.LoadLogger(func(cfg *z.LogConfig) {
-	//	cfg.Level = "debug"
-	//})
+	z.LoadLogger(func(cfg *z.LogConfig) {
+		cfg.Level = "debug"
+	})
 	z.Hook = func(entry zapcore.Entry) error {
 		time := entry.Time.Format(time.DateTime)
 		msg := entry.Message
