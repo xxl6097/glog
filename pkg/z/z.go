@@ -3,6 +3,7 @@ package z
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -17,6 +18,10 @@ func LoadLogger(fn func(conf *LogConfig)) {
 	cfg := GetLogConfig()
 	if fn != nil {
 		fn(cfg)
+	}
+	if cfg.LogDir != "" {
+		cfg.Path = filepath.Join(cfg.LogDir, "app.log")
+		cfg.ErrorPath = filepath.Join(cfg.LogDir, "error.log")
 	}
 	logger := initZapLogger(cfg, cfg.AddCallerSkip)
 	zap.ReplaceGlobals(logger.Named("glog"))
