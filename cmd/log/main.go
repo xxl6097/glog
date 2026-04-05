@@ -2,9 +2,11 @@ package main
 
 import (
 	"errors"
+	"path/filepath"
 	"time"
 
 	"github.com/xxl6097/glog/pkg/z"
+	"github.com/xxl6097/glog/pkg/zutil"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -62,8 +64,33 @@ func init() {
 	//internal.InitLogger()
 	//glog.LoadLogDefault()
 
+	//z.LoadLogger(func(cfg *z.LogConfig) {
+	//	cfg.Level = "debug"
+	//	cfg.Path = zutil.AppHome("log")
+	//	cfg.Hook = func(entry zapcore.Entry) error {
+	//		//time := entry.Time.Format(time.DateTime)
+	//		//msg := entry.Message
+	//		//lineNum := entry.Caller.Line
+	//		//filepath.Base(entry.Caller.File)
+	//		//fmt.Printf("%s %s:%d %s", time, filepath.Base(entry.Caller.File), lineNum, msg)
+	//		return nil
+	//	}
+	//})
+
+}
+func main() {
+	//logger := internal.Logger.Create()
+	//defer logger.Sync()
+	//logger.Info("info...")
+	//zlog.ZapLogger.Info("z============")
+	z.L().Debug("qqq测试", zap.String("username", "tinG"))
+
+	time.Sleep(1 * time.Second)
 	z.LoadLogger(func(cfg *z.LogConfig) {
 		cfg.Level = "debug"
+		baseDir := zutil.AppHome("log")
+		cfg.Path = filepath.Join(baseDir, "app.log")
+		cfg.ErrorPath = filepath.Join(baseDir, "error.log")
 		cfg.Hook = func(entry zapcore.Entry) error {
 			//time := entry.Time.Format(time.DateTime)
 			//msg := entry.Message
@@ -74,13 +101,6 @@ func init() {
 		}
 	})
 
-}
-func main() {
-	//logger := internal.Logger.Create()
-	//defer logger.Sync()
-	//logger.Info("info...")
-	//zlog.ZapLogger.Info("z============")
-	z.L().Debug("qqq测试", zap.String("username", "tinG"))
 	z.Debug("this is debug")
 	z.L().Debug("aaaaa测试", zap.String("username", "tinG"))
 }

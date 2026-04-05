@@ -20,7 +20,7 @@ func LoadLogger(fn func(conf *LogConfig)) {
 	}
 	logger := initZapLogger(cfg, cfg.AddCallerSkip)
 	zap.ReplaceGlobals(logger.Named("glog"))
-	fmt.Printf("Load logger config: %+v\n", cfg)
+	fmt.Printf("加载日志 fn:%+v cfg:%+v\n", fn, cfg)
 	check(cfg)
 }
 
@@ -176,9 +176,12 @@ func isTerminal1() bool {
 }
 
 func L() *zap.Logger {
+	//if GetLogConfig().Logger == nil {
+	//	fmt.Println("Logger is nill")
+	//}
 	l := zap.L()
 	if l.Name() == "" {
 		LoadLogger(nil)
 	}
-	return l
+	return zap.L()
 }
