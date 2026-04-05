@@ -9,7 +9,7 @@ import (
 var oldLog *zap.Logger
 
 func init() {
-	cfg := getInstance()
+	cfg := GetLogConfig()
 	oldLog = initZapLogger(cfg, 1)
 }
 

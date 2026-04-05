@@ -49,8 +49,8 @@ type LogConfig struct {
 var instance *LogConfig
 var once sync.Once
 
-// GetInstance 获取单例
-func getInstance() *LogConfig {
+// GetLogConfig 获取单例
+func GetLogConfig() *LogConfig {
 	once.Do(func() {
 		// 只执行一次
 		instance = &LogConfig{

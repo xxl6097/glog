@@ -14,13 +14,13 @@ import (
 //var Hook func(zapcore.Entry) error
 
 func LoadDefaultLogger() {
-	cfg := getInstance()
+	cfg := GetLogConfig()
 	logger := initZapLogger(cfg, 0)
 	zap.ReplaceGlobals(logger.Named("glog"))
 }
 
 func LoadLogger(fn func(conf *LogConfig)) {
-	cfg := getInstance()
+	cfg := GetLogConfig()
 	if fn != nil {
 		fn(cfg)
 	}
