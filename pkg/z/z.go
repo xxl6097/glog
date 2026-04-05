@@ -13,20 +13,15 @@ import (
 
 //var Hook func(zapcore.Entry) error
 
-func LoadDefaultLogger() {
-	cfg := GetLogConfig()
-	logger := initZapLogger(cfg, 0)
-	zap.ReplaceGlobals(logger.Named("glog"))
-}
-
 func LoadLogger(fn func(conf *LogConfig)) {
 	cfg := GetLogConfig()
 	if fn != nil {
 		fn(cfg)
 	}
-	logger := initZapLogger(cfg, 0)
+	logger := initZapLogger(cfg, cfg.AddCallerSkip)
 	zap.ReplaceGlobals(logger.Named("glog"))
 	fmt.Printf("Load logger config: %+v\n", cfg)
+	check(cfg)
 }
 
 // initZapLogger 初始化日志
@@ -183,7 +178,7 @@ func isTerminal1() bool {
 func L() *zap.Logger {
 	l := zap.L()
 	if l.Name() == "" {
-		LoadDefaultLogger()
+		LoadLogger(nil)
 	}
-	return zap.L()
+	return l
 }

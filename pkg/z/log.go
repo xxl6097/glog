@@ -8,9 +8,10 @@ import (
 
 var oldLog *zap.Logger
 
-func init() {
-	cfg := GetLogConfig()
-	oldLog = initZapLogger(cfg, 1)
+func check(cfg *LogConfig) {
+	if oldLog == nil && cfg != nil {
+		oldLog = initZapLogger(cfg, 1)
+	}
 }
 
 func Debugf(format string, v ...interface{}) {

@@ -3,6 +3,7 @@ package z
 import (
 	"sync"
 
+	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -15,7 +16,9 @@ type LogConfig struct {
 	MaxAge           int    `yaml:"maxAge"`           // 最大保存天数
 	Compress         bool   `yaml:"compress"`         // 是否压缩
 	SeparateErrorLog bool   `yaml:"separateErrorLog"` // 是否分离错误日志
+	AddCallerSkip    int    `yaml:"addCallerSkip"`
 	Hook             func(zapcore.Entry) error
+	Logger           *zap.Logger
 }
 
 //// DefaultConfig 获取日志配置
@@ -63,6 +66,8 @@ func GetLogConfig() *LogConfig {
 			Compress:         true,
 			SeparateErrorLog: true,
 			Hook:             nil,
+			AddCallerSkip:    0,
+			Logger:           nil,
 		}
 	})
 	return instance
