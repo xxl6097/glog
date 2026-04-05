@@ -1,5 +1,11 @@
 package z
 
+import (
+	"sync"
+
+	"go.uber.org/zap/zapcore"
+)
+
 type LogConfig struct {
 	Level            string `yaml:"level"`            // 日志级别
 	Path             string `yaml:"path"`             // 主日志路径
@@ -9,6 +15,7 @@ type LogConfig struct {
 	MaxAge           int    `yaml:"maxAge"`           // 最大保存天数
 	Compress         bool   `yaml:"compress"`         // 是否压缩
 	SeparateErrorLog bool   `yaml:"separateErrorLog"` // 是否分离错误日志
+	Hook             func(zapcore.Entry) error
 }
 
 //// DefaultConfig 获取日志配置
@@ -37,3 +44,26 @@ type LogConfig struct {
 //		}
 //	})
 //}
+
+// 私有全局实例
+var instance *LogConfig
+var once sync.Once
+
+// GetInstance 获取单例
+func getInstance() *LogConfig {
+	once.Do(func() {
+		// 只执行一次
+		instance = &LogConfig{
+			Level:            "debug",
+			Path:             "./logs/app.log",
+			ErrorPath:        "./logs/error.log",
+			MaxSize:          100,
+			MaxBackups:       30,
+			MaxAge:           7,
+			Compress:         true,
+			SeparateErrorLog: true,
+			Hook:             nil,
+		}
+	})
+	return instance
+}
