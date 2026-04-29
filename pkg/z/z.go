@@ -25,7 +25,7 @@ func LoadLogger(fn func(conf *LogConfig)) {
 	}
 	logger := initZapLogger(cfg, cfg.AddCallerSkip)
 	if cfg.TagName != "" {
-		zap.ReplaceGlobals(logger.Named(conf.TagName))
+		zap.ReplaceGlobals(logger.Named(cfg.TagName))
 	}else{
 		zap.ReplaceGlobals(logger.Named("glog"))
 	}
