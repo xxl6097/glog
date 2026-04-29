@@ -9,6 +9,7 @@ import (
 
 type LogConfig struct {
 	Level            string `yaml:"level"`            // 日志级别
+	TagName          string `yaml:"tagName"`            // 日志级别
 	LogDir           string `yaml:"logDir"`           // 日志目录
 	Path             string `yaml:"path"`             // 主日志路径
 	ErrorPath        string `yaml:"errorPath"`        // 错误日志路径（可选）
