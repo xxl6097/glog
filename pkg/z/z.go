@@ -24,7 +24,12 @@ func LoadLogger(fn func(conf *LogConfig)) {
 		cfg.ErrorPath = filepath.Join(cfg.LogDir, "error.log")
 	}
 	logger := initZapLogger(cfg, cfg.AddCallerSkip)
-	zap.ReplaceGlobals(logger.Named("glog"))
+	if cfg.TagName != "" {
+		zap.ReplaceGlobals(logger.Named(conf.TagName))
+	}else{
+		zap.ReplaceGlobals(logger.Named("glog"))
+	}
+	
 	fmt.Printf("加载日志 fn:%+v cfg:%+v\n", fn, cfg)
 	check(cfg)
 }
