@@ -20,7 +20,12 @@ func LoadLogger(fn func(conf *LogConfig)) {
 		fn(cfg)
 	}
 	if cfg.LogDir != "" {
-		cfg.Path = filepath.Join(cfg.LogDir, "app.log")
+        if cfg.LogName != "" {
+            cfg.Path = filepath.Join(cfg.LogDir, cfg.LogName)
+        }else{
+            cfg.Path = filepath.Join(cfg.LogDir, "app.log")
+        }
+		
 		cfg.ErrorPath = filepath.Join(cfg.LogDir, "error.log")
 	}
 	logger := initZapLogger(cfg, cfg.AddCallerSkip)
