@@ -1,7 +1,6 @@
 package z
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,22 +19,22 @@ func LoadLogger(fn func(conf *LogConfig)) {
 		fn(cfg)
 	}
 	if cfg.LogDir != "" {
-        if cfg.LogName != "" {
-            cfg.Path = filepath.Join(cfg.LogDir, cfg.LogName)
-        }else{
-            cfg.Path = filepath.Join(cfg.LogDir, "app.log")
-        }
-		
+		if cfg.LogName != "" {
+			cfg.Path = filepath.Join(cfg.LogDir, cfg.LogName)
+		} else {
+			cfg.Path = filepath.Join(cfg.LogDir, "app.log")
+		}
+
 		cfg.ErrorPath = filepath.Join(cfg.LogDir, "error.log")
 	}
 	logger := initZapLogger(cfg, cfg.AddCallerSkip)
 	if cfg.TagName != "" {
 		zap.ReplaceGlobals(logger.Named(cfg.TagName))
-	}else{
+	} else {
 		zap.ReplaceGlobals(logger.Named("glog"))
 	}
-	
-	fmt.Printf("加载日志 fn:%+v cfg:%+v\n", fn, cfg)
+
+	//fmt.Printf("加载日志 fn:%+v cfg:%+v\n", fn, cfg)
 	check(cfg)
 }
 
